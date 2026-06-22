@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>厳選100問ビジネススピーキングトレーニング</title>
+    <style>
+        body { font-family: sans-serif; background-color: #f8fafc; color: #1e293b; margin: 0; padding: 0; display: flex; flex-direction: column; min-height: 100vh; }
+        header { background-color: #0f172a; color: white; padding: 15px; text-align: center; font-size: 1.2rem; font-weight: bold; }
+        main { flex-grow: 1; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .card { background: white; padding: 30px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); width: 100%; max-width: 550px; text-align: center; box-sizing: border-box; }
+        h2 { margin-top: 0; color: #0f172a; }
+        p { color: #475569; font-size: 0.95rem; line-height: 1.6; }
+        .btn { background-color: #2563eb; color: white; border: none; padding: 12px 35px; font-size: 1rem; border-radius: 25px; cursor: pointer; font-weight: bold; }
+        .btn:hover { background-color: #1d4ed8; }
+        .progress-bg { width: 100%; background: #e2e8f0; height: 8px; border-radius: 4px; margin-bottom: 15px; overflow: hidden; }
+        .progress-bar { background: #2563eb; height: 100%; width: 0%; transition: width 0.3s; }
+        .flex-space { display: flex; justify-content: space-between; font-size: 0.85rem; color: #64748b; margin-bottom: 20px; font-weight: bold; }
+        .q-text { font-size: 1.35rem; font-weight: bold; margin: 20px 0; color: #0f172a; min-height: 70px; display: flex; align-items: center; justify-content: center; line-height: 1.5; }
+        .btn-record { background-color: #ef4444; color: white; border: none; width: 80px; height: 80px; border-radius: 50%; cursor: pointer; font-size: 2rem; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(239,68,68,0.2); }
+        .recording { animation: pulse 1.2s infinite; background-color: #dc2626; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.06); } 100% { transform: scale(1); } }
+        .btn-next { background-color: #e2e8f0; color: #94a3b8; border: none; padding: 10px 25px; border-radius: 6px; cursor: not-allowed; float: right; font-weight: bold; }
+        .btn-next.active { background-color: #2563eb; color: white; cursor: pointer; }
+        .clearfix::after { content: ""; clear: both; display: table; }
+        .report-list { max-height: 400px; overflow-y: auto; text-align: left; margin-bottom: 25px; }
+        .report-item { border: 1px solid #e2e8f0; background: #f8fafc; padding: 15px; border-radius: 12px; margin-bottom: 15px; }
+        .report-top { display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 5px; font-weight: bold; }
+        .txt-label { font-size: 0.75rem; color: #64748b; margin-top: 8px; font-weight: bold; }
+        .model-ans { font-size: 1.05rem; font-style: italic; color: #1e3a8a; margin: 2px 0; font-weight: bold; }
+        .user-ans { font-size: 1.05rem; color: #dc2626; margin: 2px 0; font-weight: bold; }
+        .user-ans.good { color: #16a34a; }
+        .comment-box { background: #eff6ff; padding: 10px; border-radius: 6px; font-size: 0.85rem; color: #1e40af; border-left: 4px solid #3b82f6; margin-top: 8px; }
+        .audio-player { margin-top: 8px; width: 100%; height: 32px; }
+       
+        /* 追加したセレクトボックスのスタイル */
+        .select-wrapper { margin: 20px 0 25px 0; }
+        .select-count { padding: 10px 20px; font-size: 1rem; border-radius: 8px; border: 2px solid #cbd5e1; font-weight: bold; color: #1e293b; outline: none; cursor: pointer; }
+        .select-count:focus { border-color: #2563eb; }
+    </style>
+</head>
+<body>
+
+    <header>💼 ビジネス英会話スピーキング・厳選100問</header>
+
+    <main>
+        <div id="start-screen" class="card">
+            <h2>プロフェッショナル発話トレーニング</h2>
+            <p>厳選された<b>ビジネスでの発話文（30文字〜40文字）</b>が、100個のプールから毎回ランダムに出題されます。<br>マイクに向かって英語を話すと、自動で文字起こしされ、<b>語順や過不足を含めた精緻な構文一致度</b>を採点します。<br>結果画面では、<b>自分の録音を聞き返す</b>ことができます。</p>
+           
+            <div class="select-wrapper">
+                <label for="select-count" style="font-weight: bold; margin-right: 10px;">出題数：</label>
+                <select id="select-count" class="select-count">
+                    <option value="1">1 問</option>
+                    <option value="2">2 問</option>
+                    <option value="3">3 問</option>
+                    <option value="4">4 問</option>
+                    <option value="5">5 問</option>
+                    <option value="6">6 問</option>
+                    <option value="7">7 問</option>
+                    <option value="8">8 問</option>
+                    <option value="9">9 問</option>
+                    <option value="10" selected>10 問</option>
+                </select>
+            </div>
+
+            <button id="btn-start" class="btn">トレーニングを始める</button>
+        </div>
+
+        <div id="practice-screen" class="card" style="display: none;">
+            <div class="progress-bg"><div id="progress-bar" class="progress-bar"></div></div>
+            <div class="flex-space">
+                <span id="question-number">第 1 問 / 10</span>
+                <span id="timer" style="color: #ef4444; display: none; font-weight: bold;">● 録音・解析中...</span>
+            </div>
+            <div style="font-size: 0.8rem; color: #2563eb; font-weight: bold; text-align: left;">お題の日本語</div>
+            <div id="question-text" class="q-text">読み込み中...</div>
+
+            <div style="margin: 25px 0;">
+                <button id="btn-record" class="btn-record">🎤</button>
+                <p id="record-status" style="font-size: 0.9rem; color: #64748b; margin-top: 10px;">ボタンを押して、英語で喋ってください</p>
+                <div id="live-transcript" style="font-size: 1.1rem; font-weight: bold; color: #2563eb; margin-top: 10px; min-height: 24px;"></div>
+            </div>
+
+            <div class="clearfix">
+                <button id="btn-next" class="btn-next" disabled>次へ進む →</button>
+            </div>
+        </div>
+
+        <div id="result-screen" class="card" style="display: none;">
+            <h2>🎉 トレーニング完了！</h2>
+            <p>今回の音声解析結果と、文字起こしされたデータです。構文の正確性と共にご自身の声を確認できます。</p>
+            <div id="report-container" class="report-list"></div>
+            <button id="btn-restart" class="btn">もう一度挑戦する</button>
+        </div>
+    </main>
+
+    <script>
+        // ビジネス例文100問のプール（日本語30文字〜40文字）
+        const questionPool = [
+            { q: "今週の金曜日までに、プロジェクトの進捗報告書を提出してください。", a: "Please submit the project progress report by this Friday.", advice: "progress の 'r' は舌を上顎につけず、奥に引くように発音しましょう。" },
+            { q: "来週の月曜日に、新しいクライアントとのキックオフミーティングを行います。", a: "We will hold a kick-off meeting with the new client next Monday.", advice: "hold a はリンキングして「ホールダ」のように滑らかに繋げます。" },
+            { q: "その件につきましては、確認の上、本日中にメールにてご返信いたします。", a: "I will check on the matter and reply to you by email today.", advice: "check on は「チェック オン」ではなく「チェッコン」と発声します。" },
+            { q: "明日の午前中までに、ミーティングの議事録を共有していただけますか。", a: "Could you please share the meeting minutes by tomorrow morning?", advice: "Could you please はビジネスで多用する表現です。「クッジュー」と繋げて。" },
+            { q: "新製品の発売に向けて、マーケティング戦略を再検討する必要があります。", a: "We need to reconsider our marketing strategy for the new product launch.", advice: "strategy（ストラテジー）は 'ra' の部分にアクセントを置きます。" },
+            { q: "スケジュールの変更について、できるだけ早く関係者に連絡してください。", a: "Please contact the stakeholders regarding the schedule change as soon as possible.", advice: "as soon as possible は一息で「アズスナズポッシブル」と発音します。" },
+            { q: "次回の定例会議は、来週の水曜日午後２時から開催される予定です。", a: "The next regular meeting is scheduled for next Wednesday at 2 p.m.", advice: "scheduled（スケジュールドゥ）の最初の 'sch' をクリアに発声。" },
+            { q: "予算の都合上、このプロジェクトの経費を削減しなければなりません。", a: "Due to budget constraints, we must reduce the expenses for this project.", advice: "constraints（コンストプレインツ）の 'str' を素早く発音します。" },
+            { q: "提案書の内容について、ご意見やご質問があればお聞かせください。", a: "Please let us know if you have any opinions or questions about the proposal.", advice: "let us know は音が繋がり「レッタズノウ」のように聞こえます。" },
+            { q: "今回のトラブルの原因を究明し、再発防止策を講じる必要があります。", a: "We need to investigate the cause of this trouble and take preventive measures.", advice: "investigate（インヴェスティゲイト）の 've' をしっかり意識して。" },
+            { q: "弊社の最新の会社案内と製品カタログを、添付ファイルにて送付いたします。", a: "I am sending our latest company profile and product catalog as an attachment.", advice: "as an はリンキングして「アザン」と一つの単語のように発音します。" },
+            { q: "そのプロジェクトの締め切りを、もう一週間延期することは可能ですか。", a: "Is it possible to extend the deadline for the project by another week?", advice: "Is it possible は「イズィットポッシブル」と流れるように繋げます。" },
+            { q: "本日の会議の主な目的は、来期の販売計画について議論することです。", a: "The main objective of today's meeting is to discuss the next sales plan.", advice: "objective（オブジェクティヴ）の 'v' は下唇を軽く噛みます。" },
+            { q: "契約書の詳細を確認するために、法務部の担当者に相談してみます。", a: "I will consult with the legal department to review the details of the contract.", advice: "legal（リーガル）の 'l' は舌先を上の歯の付け根につけて止めます。" },
+            { q: "開発チームとデザインチームの間で、より緊密な連携が必要です。", a: "Closer cooperation is required between the development and design teams.", advice: "cooperation（コオペレイション）は 'ra' にアクセントを置きます。" },
+            { q: "先ほど送信したメールに誤りがありましたので、訂正してお詫びします。", a: "There was an error in the email I sent earlier, so I apologize and correct it.", advice: "apologize（アポロジャイズ）の最初の 'a' は弱く発音します。" },
+            { q: "部品の見積もりを依頼したいので、仕様書を送っていただけますか。", a: "Could you send us the specifications so we can request a quote for the parts?", advice: "specifications（スペシフィケイションズ）の長い単語はリズム良く。" },
+            { q: "海外市場への参入にあたり、現地のニーズを調査する必要があります。", a: "We need to research local needs when entering the overseas market.", advice: "research の 're' は強く、'search' は舌を引きながら発音します。" },
+            { q: "お客様からのクレームに対して、誠意を持って迅速に対応してください。", a: "Please respond quickly and sincerely to complaints from customers.", advice: "sincerely（シンシアリー）は感謝や誠意を示すビジネスの重要語です。" },
+            { q: "新しい基幹システムの導入により、業務の効率化が期待されています。", a: "The introduction of the new core system is expected to improve work efficiency.", advice: "expected to の 'd' と 't' が重なり「イクスペクティトゥ」になります。" },
+            { q: "今回の出張の目的は、現地の提携企業と新しい契約を締結することです。", a: "The purpose of this business trip is to sign a new contract with a local partner.", advice: "purpose（パーパス）の後半の 'pose' は「ポーズ」ではなく「パス」です。" },
+            { q: "セミナーの参加人数を確定したいので、明日までに返答をお願いします。", a: "Please reply by tomorrow as we want to finalize the number of seminar participants.", advice: "finalize（ファイナライズ）の最初の 'fi' をハキハキと強調。" },
+            { q: "競合他社の動向を分析し、自社の強みを活かした戦略を立てましょう。", a: "Let's analyze competitors' trends and build a strategy that leverages our strengths.", advice: "strengths（ストレングス）の最後の 'ths' の摩擦音を意識して。" },
+            { q: "この資料は社外秘ですので、取り扱いには十分にご注意ください。", a: "This document is confidential, so please handle it with great care.", advice: "confidential（コンフィデンシャル）は 'den' にアクセントがあります。" },
+            { q: "プレゼンテーションの準備のために、プロジェクターの確認をします。", a: "I will check the projector to prepare for the presentation.", advice: "prepare for は繋がって「プリペアフォー」と滑らかに移行します。" },
+            { q: "今月の売上目標を達成するために、営業活動を強化する必要があります。", a: "We need to strengthen our sales activities to achieve this month's sales target.", advice: "strengthen（ストレングスン）の 'th' の濁らない音に注意。" },
+            { q: "部課長会議で承認されたガイドラインに従って、業務を進めてください。", a: "Please proceed with the work according to the guidelines approved at the manager meeting.", advice: "proceed with の 'd' は軽く発音し、次の 'w' へ繋げます。" },
+            { q: "面接のスケジュールを調整するため、候補者に連絡を取ってください。", a: "Please contact the candidates to adjust the interview schedule.", advice: "candidates（キャンディデイツ）の最初の 'ca' を強く発音します。" },
+            { q: "当初予定していた予算よりも、コストが大幅に上回ってしまいました。", a: "The costs significantly exceeded the budget that was originally planned.", advice: "exceeded（イクシーディドゥ）の過去形の語尾をクリアに。" },
+            { q: "コストパフォーマンスを高めるため、別のサプライヤーを探しています。", a: "We are looking for another supplier to improve cost performance.", advice: "looking for another は流れるように「ルッキングフォーアナザー」に。" },
+            { q: "この課題を解決するためには、他部署との協力が不可欠だと考えます。", a: "I believe cooperation with other departments is essential to solve this issue.", advice: "I believe の 'v' から 'c' への移行をスムーズに行いましょう。" },
+            { q: "工場の生産ラインの自動化により、人件費の削減が可能になります。", a: "Automation of the factory production line makes it possible to reduce labor costs. ", advice: "makes it possible は「メイクスィットポッシブル」と繋がります。" },
+            { q: "明日のワークショップで使用する資料を、人数分印刷してください。", a: "Please print copies of the materials for everyone to use in tomorrow's workshop.", advice: "print copies の 't' はほとんど聞こえないくらい気流を止めます。" },
+            { q: "最新のデータに基づいて、来四半期の需要予測を修正いたしました。", a: "Based on the latest data, we have revised the demand forecast for the next quarter.", advice: "demand forecast（ディマンドフォアキャスト）を明瞭に発音。" },
+            { q: "ユーザーのフィードバックを反映させ、アプリの機能を改善します。", a: "We will reflect user feedback to improve the functions of the app.", advice: "reflect（リフレクト）の 'l' と improve の 'r' の差を意識。" },
+            { q: "予定より早くプロジェクトが完了したため、本日打ち上げを行います。", a: "We will hold a celebration party today because the project was completed early.", advice: "celebration（セレブレイション）の 'la' を強調して発声します。" },
+            { q: "来月開催される展示会への出展について、詳細を話し合いましょう。", a: "Let's discuss the details regarding exhibiting at the trade show next month.", advice: "discuss（ディスカス）は後半にアクセントがある点に注目。" },
+            { q: "今回のキャンペーンの成果を評価するために、データを収集します。", a: "We will collect data to evaluate the performance of this campaign.", advice: "evaluate（イヴァリュエイト）の 'va' をはっきりと発音します。" },
+            { q: "配送遅延が発生しているため、お客様にお詫びの連絡を入れてください。", a: "Please contact the customers to apologize for the delivery delay.", advice: "delivery delay（デリヴァリーディレイ）の頭文字の韻を意識。" },
+            { q: "リモートワークの導入によって、社員の通勤ストレスが軽減されました。", a: "The introduction of remote work has reduced commuting stress for employees.", advice: "reduced（リデューストゥ）の末尾の 'd' は息を鋭く出すイメージです。" },
+            { q: "新しい人事評価制度について、全社員向けの意見交換会を開きます。", a: "We will hold an opinion exchange meeting for all employees about the new evaluation system.", advice: "exchange（イクスチェンジ）の 'ch' は強く息を弾く音です。" },
+            { q: "グローバル人材を育成するため、社内での英語研修を導入します。", a: "To develop global talent, we will introduce in-house English training.", advice: "develop（ディヴェロップ）のアクセントは真ん中の 've' です。" },
+            { q: "既存顧客との関係を維持するため、定期的なフォローアップが重要です。", a: "Regular follow-up is important to maintain relationships with existing customers.", advice: "follow-up は「フォローアップ」ではなく「フォロワップ」と結合。" },
+            { q: "技術的な問題が発生した場合は、すぐにサポートデスクに連絡してください。", a: "In case a technical issue occurs, please contact the support desk immediately.", advice: "immediately（イミーディアトリィ）の 'me' を一番強く。" },
+            { q: "今期の利益配分に関する具体的な提案が、取締役会で承認されました。", a: "The specific proposal regarding this term's profit distribution was approved by the board.", advice: "approved by は「アプルーヴドゥ・バイ」ではなく「アプルーヴドゥバイ」に。" },
+            { q: "業務効率化のアイデアがあれば、どなたでも提案箱に入れてください。", a: "If you have ideas for improving work efficiency, anyone can put them in the suggestion box.", advice: "efficiency（エフィシェンシー）の 'fi' を強調して発音します。" },
+            { q: "クラウドサービスを活用することで、情報共有がスムーズになります。", a: "By utilizing cloud services, information sharing becomes smooth.", advice: "utilizing（ユータライジング）の最初の音をクリアに発声。" },
+            { q: "今回の市場調査の結果は、今後の製品開発に大きく貢献するでしょう。", a: "The results of this market research will greatly contribute to future product development.", advice: "contribute（コントリビューツ）のアクセントは 'tri' にあります。" },
+            { q: "担当者が有給休暇を取得しているため、代わりに私が対応いたします。", a: "Since the person in charge is taking paid leave, I will respond on their behalf.", advice: "on their behalf（オンゼアビハーフ）は「〜の代わりに」の定番フレーズ。" },
+            { q: "新規顧客を開拓するために、オンラインセミナーを定期開催します。", a: "We will regularly hold online seminars to attract new customers.", advice: "regularly（レギュラリー）の 'l' と 'r' の連続をスムーズに。" },
+            { q: "会議室の予約システムが変更になりましたので、ご注意ください。", a: "Please note that the conference room reservation system has changed.", advice: "reservation（レザヴェイション）の 'va' の部分を一番強く。" },
+            { q: "当社のウェブサイトのアクセス数を増やすため、SEO対策を行います。", a: "We will implement SEO measures to increase traffic to our website.", advice: "implement（インプリメント）の最初の 'i' にアクセントを。" },
+            { q: "研修プログラムの満足度を測定するため、アンケートを実施します。", a: "We will conduct a survey to measure the satisfaction level of the training program.", advice: "conduct（コンドゥクト）の動詞としてのアクセントは後半です。" },
+            { q: "部下のモチベーションを高めるため、適切なフィードバックを行います。", a: "We will provide appropriate feedback to increase the motivation of subordinates.", advice: "appropriate（アプロプリアト）の 'p' と 'r' を滑らかに。" },
+            { q: "生産性の向上を目指し、無駄なミーティングを削減する方針です。", a: "With the goal of improving productivity, our policy is to reduce wasteful meetings.", advice: "productivity（プロダクティヴィティ）の 'ti' をクリアに。" },
+            { q: "サプライチェーンの混乱による影響を、最小限に抑える必要があります。", a: "We need to minimize the impact caused by disruptions in the supply chain.", advice: "disruptions（ディスラプションズ）の 'p' から 'tion' への移行を意識。" },
+            { q: "チームの目標を達成するため、それぞれの役割を明確にしましょう。", a: "Let's clarify each person's role to achieve the team's goals.", advice: "clarify（クラリファイ）の最初の 'c' をしっかりと息を吐いて。" },
+            { q: "社員の健康管理をサポートするため、新しい福利厚生を導入します。", a: "We will introduce new welfare benefits to support employees' health management.", advice: "welfare benefits（ウェルフェアベネフィッツ）の 'v' 音に注意。" },
+            { q: "契約の条件について、相手方の弁護士と直接交渉する必要があります。", a: "We need to negotiate the terms of the contract directly with the opposing lawyer.", advice: "negotiate（ネゴシエイト）の 'go' を強調して発音。" },
+            { q: "新製品の試作品が完成しましたので、社内レビューを実施します。", a: "Since the prototype of the new product is complete, we will conduct an in-house review.", advice: "prototype（プロトタイプ）の最初の 'o' は二重母音です。" },
+            { q: "サーバーの定期メンテナンスのため、週末はシステムが停止します。", a: "Due to regular server maintenance, the system will be down this weekend.", advice: "maintenance（メインテナンス）の後半の 'te' は弱く発音します。" },
+            { q: "顧客データの安全性を確保するため、セキュリティ対策を強化します。", a: "We will strengthen security measures to ensure the safety of customer data.", advice: "ensure（インシュア）の語尾を優しく伸ばすイメージで。" },
+            { q: "ブランドの認知度を高めるため、SNSを活用した広報活動を行います。", a: "We will conduct public relations activities utilizing SNS to increase brand awareness.", advice: "awareness（アウェアネス）の 'ware' にアクセントがあります。" },
+            { q: "長期的な成長を達成するために、研究開発への投資を拡大します。", a: "We will expand investment in research and development to achieve long-term growth.", advice: "research and development は「アールアンドディー」と略されることも。" },
+            { q: "注文内容の変更をご希望の場合は、発送前にお知らせください。", a: "If you wish to change your order details, please let us know before shipping.", advice: "details（ディーテイルズ）は最初の 'de' を強くハキハキと。" },
+            { q: "次のプロジェクトのリーダーとして、彼を推薦したいと考えています。", a: "I would like to recommend him as the leader for the next project.", advice: "recommend him は 'h' が弱まり「レコメンディム」のように聞こえます。" },
+            { q: "業務マニュアルを作成することで、属人化を防ぐことができます。", a: "Creating a work manual can prevent tasks from becoming dependent on specific individuals.", advice: "prevent（プリヴェント）の 'v' はしっかり下唇を噛みます。" },
+            { q: "今週の金曜日までに、出張費用の精算手続きを完了させてください。", a: "Please complete the reimbursement process for business trip expenses by this Friday.", advice: "reimbursement（リインバースメント）の発音を慎重に。" },
+            { q: "来期の採用計画について、人事部長と打ち合わせを行う予定です。", a: "I plan to have a meeting with the HR manager about next term's hiring plan.", advice: "plan to have a は「プラントゥハヴァ」のように一気につなげて。" },
+            { q: "在庫不足による機会損失を防ぐため、発注タイミングを見直します。", a: "We will review the ordering timing to prevent opportunity loss due to stockouts.", advice: "stockouts（ストックアウツ）の最後の 'ts' を鋭く息で破裂。" },
+            { q: "企業の社会的責任を果たすため、環境保護活動に取り組みます。", a: "We will engage in environmental protection activities to fulfill corporate social responsibility.", advice: "fulfill（フルフィル）の２つの 'l' の弾きを意識して。" },
+            { q: "お客様のニーズの変化に合わせて、サービス内容を柔軟に変更します。", a: "We will flexibly change service details according to changes in customer needs.", advice: "flexibly（フレキシブリー）の 'x' の「クス」という音をクリアに。" },
+            { q: "研修用のテキストを最新版に更新しましたので、ご確認ください。", a: "Please check the training text, as it has been updated to the latest version.", advice: "updated to は「アップデート・トゥ」ではなく「アップデイティッドゥトゥ」に。" },
+            { q: "他のプロジェクトとの重複を避けるため、スケジュールを確認します。", a: "I will check the schedule to avoid overlap with other projects.", advice: "avoid overlap は「アヴォイド・オーヴァーラップ」と滑らかに連結。" },
+            { q: "不良品の発生率を下げるため、品質管理体制を根本から見直します。", a: "We will radically review the quality control system to lower the defect rate.", advice: "radically（ラディカリー）の最初の 'ra' を最も強く。" },
+            { q: "デジタル技術を導入することで、伝統的なビジネスモデルを革新します。", a: "By introducing digital technology, we will innovate traditional business models.", advice: "innovate（イノヴェイト）の 'va' の発音を大切に。" },
+            { q: "パートナー企業との信頼関係を築くため、透明性の高い通信を行います。", a: "We communicate with high transparency to build trust with partner companies.", advice: "transparency（トランスペアレンシー）の 'pa' を強調します。" },
+            { q: "新しいオフィスへの移転スケジュールが、正式に決定いたしました。", a: "The relocation schedule to the new office has been officially decided.", advice: "officially（オフィシャリー）のアクセントは 'fi' にあります。" },
+            { q: "顧客満足度を向上させるための、新しい具体的な施策を提案します。", a: "I will propose new specific measures to improve customer satisfaction.", advice: "propose（プロポーズ）の後半 'pose' にアクセントを。" },
+            { q: "チーム内の情報共有を円滑にするため、チャットツールを導入します。", a: "We will introduce a chat tool to smooth information sharing within the team.", advice: "introduce a は「イントロデュースア」ではなく「イントロデュースァ」に。" },
+            { q: "予期せぬリスクに備えるため、危機管理マニュアルを作成します。", a: "We will create a crisis management manual to prepare for unexpected risks.", advice: "unexpected（アニクスペクティドゥ）のアクセントを意識して。" },
+            { q: "業界の最新トレンドを把握するため、専門のカンファレンスに参加します。", a: "I will participate in a specialized conference to understand the latest industry trends.", advice: "participate（パーティシペイト）の 'ti' を強く発音。" },
+            { q: "業務の優先順位を決定し、限られたリソースを有効に活用しましょう。", a: "Let's determine work priorities and effectively utilize limited resources.", advice: "priorities（プライオリティーズ）の最初の 'o' の部分を一番強く。" },
+            { q: "新しいロゴデザインについて、社内アンケートで意見を募ります。", a: "We will gather opinions through an in-house survey regarding the new logo design.", advice: "gather（ギャザー）の 'th' の濁る音を意識しましょう。" },
+            { q: "当四半期の決算短信が、本日公式ウェブサイトで公開されました。", a: "This quarter's financial results summary was published on the official website today.", advice: "financial（ファイナンシャル）の最初の音をハキハキと。" },
+            { q: "多様な働き方を支援するため、フレックスタイム制を導入します。", a: "We will introduce a flextime system to support diverse working styles.", advice: "diverse（ダイヴァース）の後半部分にアクセントを。" },
+            { q: "取引先からの入金確認が取れ次第、商品の発送手続きを行います。", a: "As soon as payment confirmation from the client is received, we will ship the goods.", advice: "confirmation（コンファメイション）の 'ma' を強調。" },
+            { q: "技術的な仕様変更について、開発責任者から説明があります。", a: "The development manager will explain the technical specification changes.", advice: "manager（マネージャー）の 'ma' の部分を一番強く。" },
+            { q: "地域社会との良好な関係を構築するため、イベントを主催します。", a: "We will host an event to build good relationships with the local community.", advice: "host an event は「ホースト・アン・イベント」ではなく「ホーストァニヴェント」に。" },
+            { q: "コストと品質のバランスを考慮し、最適な材料を選択してください。", a: "Please select the optimal materials, considering the balance between cost and quality.", advice: "optimal（オプティマル）の最初の 'o' を強くハキハキと。" },
+            { q: "組織の再編成に伴い、一部の部署の名称が来月から変更されます。", a: "Consequent to organization restructuring, some department names will change next month.", advice: "restructuring（リストラクチャリング）の発音リズムを大事に。" },
+            { q: "最新のサイバー攻撃から保護するため、システムを更新します。", a: "We will update the system to protect against the latest cyberattacks.", advice: "protect against は「プロテクト・アゲインスト」ではなく「プロテクタゲインスト」に。" },
+            { q: "新しいサブスクリプションサービスの会員数が、順調に伸びています。", a: "The number of members for the new subscription service is growing steadily.", advice: "growing steadily の 'g' と 'st' の連動をスムーズに。" },
+            { q: "来週の株主総会に向けて、想定問答集の作成を進めてください。", a: "Please proceed with creating the FAQ list for next week's shareholders' meeting.", advice: "shareholders（シェアホルダーズ）の 'share' を強調します。" },
+            { q: "知的財産権を保護するため、特許の出願手続きを開始いたします。", a: "We will start the patent application process to protect our intellectual property rights.", advice: "intellectual（インテレクチュアル）のアクセントは 'lec' です。" },
+            { q: "業務効率の大幅な向上のため、RPAツールの導入を検討しています。", a: "We are considering introducing RPA tools to significantly improve work efficiency.", advice: "significantly（シグニフィカントリー）の 'fi' を一番強く。" },
+            { q: "お客様の声をダイレクトに反映した、革新的なサービス提供します。", a: "We will provide innovative services that directly reflect the voice of our customers.", advice: "innovative（イノヴェイティヴ）の最初の 'in' を強く発音します。" },
+            { q: "トラブル発生時の緊急連絡網を、最新の情報に更新してください。", a: "Please update the emergency contact network for when troubles occur to the latest info.", advice: "emergency（イマージェンシー）の 'mer' にアクセントがあります。" },
+            { q: "当社の強みである高い技術力をアピールし、商談を優位に進めましょう。", a: "Let's appeal our high technical capability, our strength, and lead negotiations advantageously.", advice: "capability（ケイパビリティ）の 'ba' を意識して弾きます。" },
+            { q: "持続可能な開発目標の達成に向けて、具体的な行動計画を策定します。", a: "We will formulate a concrete action plan toward achieving sustainable development goals.", advice: "formulate（フォーミュレイト）の最初の 'for' を力強く。" }
+        ];
+
+        let selectedQuiz = [];
+        let currentIdx = 0;
+        let isRecording = false;
+        let totalQuestions = 10; // 【変更】選択された問題数を保持する変数
+
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        let recognition = null;
+
+        if (SpeechRecognition) {
+            recognition = new SpeechRecognition();
+            recognition.lang = 'en-US';
+            recognition.continuous = true;
+            recognition.interimResults = true;
+        }
+
+        let mediaRecorder = null;
+        let audioChunks = [];
+        let userAudioBlobs = [];
+        let userTranscripts = [];
+
+        const startScreen = document.getElementById('start-screen');
+        const practiceScreen = document.getElementById('practice-screen');
+        const resultScreen = document.getElementById('result-screen');
+        const btnStart = document.getElementById('btn-start');
+        const btnRecord = document.getElementById('btn-record');
+        const btnNext = document.getElementById('btn-next');
+        const btnRestart = document.getElementById('btn-restart');
+        const questionNumber = document.getElementById('question-number');
+        const questionText = document.getElementById('question-text');
+        const progressBar = document.getElementById('progress-bar');
+        const timerStatus = document.getElementById('timer');
+        const recordStatus = document.getElementById('record-status');
+        const liveTranscript = document.getElementById('live-transcript');
+        const reportContainer = document.getElementById('report-container');
+        const selectCount = document.getElementById('select-count'); // 【追加】要素の取得
+
+        btnStart.onclick = startPractice;
+        btnRecord.onclick = toggleRecording;
+        btnNext.onclick = nextQuestion;
+        btnRestart.onclick = restartPractice;
+
+        // 【変更】10件固定だった関数を、指定数だけランダム抽出する汎用的な関数に変更
+        function getRandomQuestions(count) {
+            return [...questionPool].sort(() => 0.5 - Math.random()).slice(0, count);
+        }
+
+        function startPractice() {
+            if (!recognition) {
+                alert("お使いのブラウザや環境は音声認識に対応していません。Google Chromeでお試しください。");
+                return;
+            }
+
+            // 【追加】ユーザーが選択した問題数を数値として取得
+            totalQuestions = parseInt(selectCount.value, 10);
+
+            navigator.mediaDevices.getUserMedia({ audio: true })
+                .then(stream => {
+                    setupMediaRecorder(stream);
+                    selectedQuiz = getRandomQuestions(totalQuestions); // 【変更】選択された数だけ取得
+                    currentIdx = 0;
+                    userTranscripts = [];
+                    userAudioBlobs = [];
+
+                    startScreen.style.display = 'none';
+                    resultScreen.style.display = 'none';
+                    practiceScreen.style.display = 'block';
+                    loadQuestion();
+                })
+                .catch(err => {
+                    alert("マイクの使用が許可されていないか、マイクが見つかりません。");
+                    console.error(err);
+                });
+        }
+
+        function setupMediaRecorder(stream) {
+            mediaRecorder = new MediaRecorder(stream);
+
+            mediaRecorder.ondataavailable = (event) => {
+                if (event.data.size > 0) {
+                    audioChunks.push(event.data);
+                }
+            };
+
+            mediaRecorder.onstop = () => {
+                const audioBlob = new Blob(audioChunks, { type: 'audio/mp3' });
+                userAudioBlobs[currentIdx] = audioBlob;
+                audioChunks = [];
+            };
+        }
+
+        function loadQuestion() {
+            // 【変更】「10」と固定されていた部分を変数（totalQuestions）に変更
+            questionNumber.textContent = `第 ${currentIdx + 1} 問 / ${totalQuestions}`;
+            questionText.textContent = selectedQuiz[currentIdx].q;
+            progressBar.style.width = `${((currentIdx + 1) / totalQuestions) * 100}%`;
+
+            btnNext.disabled = true;
+            btnNext.className = "btn-next";
+            recordStatus.textContent = "ボタンを押して、マイクに向かって英語で喋ってください";
+            liveTranscript.textContent = "";
+            btnRecord.className = "btn-record";
+            timerStatus.style.display = 'none';
+        }
+
+        function toggleRecording() {
+            if (!isRecording) {
+                try {
+                    liveTranscript.textContent = "（聞き取り中...）";
+                    userTranscripts[currentIdx] = "";
+                    userAudioBlobs[currentIdx] = null;
+                    audioChunks = [];
+
+                    recognition.start();
+                    if (mediaRecorder && mediaRecorder.state === "inactive") {
+                        mediaRecorder.start();
+                    }
+                } catch (e) {
+                    console.log(e);
+                }
+            } else {
+                recognition.stop();
+                if (mediaRecorder && mediaRecorder.state === "recording") {
+                    mediaRecorder.stop();
+                }
+            }
+        }
+
+        if (recognition) {
+            recognition.onstart = () => {
+                isRecording = true;
+                btnRecord.className = "btn-record recording";
+                recordStatus.textContent = "＼ 録音中 ／ 話し終えたら、もう一度ボタンを押して停止";
+                timerStatus.style.display = 'inline';
+            };
+
+            recognition.onresult = (event) => {
+                let interimTranscript = '';
+                let finalTranscript = '';
+
+                for (let i = 0; i < event.results.length; ++i) {
+                    if (event.results[i].isFinal) {
+                        finalTranscript += event.results[i][0].transcript + ' ';
+                    } else {
+                        interimTranscript += event.results[i][0].transcript;
+                    }
+                }
+
+                const fullText = (finalTranscript + interimTranscript).trim();
+                liveTranscript.textContent = fullText;
+                userTranscripts[currentIdx] = fullText;
+            };
+
+            recognition.onend = () => {
+                isRecording = false;
+                btnRecord.className = "btn-record";
+                timerStatus.style.display = 'none';
+
+                if (mediaRecorder && mediaRecorder.state === "recording") {
+                    mediaRecorder.stop();
+                }
+
+                if (!userTranscripts[currentIdx] || userTranscripts[currentIdx].trim() === "") {
+                    userTranscripts[currentIdx] = "(聞き取れませんでした)";
+                    recordStatus.textContent = "うまく聞き取れませんでした。もう一度お試しいただくか、次へ進んでください。";
+                } else {
+                    recordStatus.textContent = "聞き取り完了！下部にあなたの英語が表示されています。";
+                }
+
+                btnNext.disabled = false;
+                btnNext.className = "btn-next active";
+            };
+
+            recognition.onerror = (event) => {
+                if(event.error === 'not-allowed') {
+                    alert("マイクの使用が許可されていません。");
+                }
+            };
+        }
+
+        function nextQuestion() {
+            // 【変更】終了条件の「9（10問未満）」を「totalQuestions - 1」に変更
+            if (currentIdx < totalQuestions - 1) {
+                currentIdx++;
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        // 精緻化された採点ロジック（単語レベルのレーベンシュタイン距離）
+        function calculateScore(model, user) {
+            if (!user || user.includes("聞き取れませんでした")) return 0;
+
+            const cleanWords = (str) => str.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?"']/g,"").split(/\s+/).filter(Boolean);
+            const modelWords = cleanWords(model);
+            const userWords = cleanWords(user);
+
+            if (modelWords.length === 0) return 0;
+            if (userWords.length === 0) return 0;
+
+            const m = modelWords.length;
+            const n = userWords.length;
+           
+            const dp = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0));
+            for (let i = 0; i <= m; i++) dp[i][0] = i;
+            for (let j = 0; j <= n; j++) dp[0][j] = j;
+
+            for (let i = 1; i <= m; i++) {
+                for (let j = 1; j <= n; j++) {
+                    if (modelWords[i - 1] === userWords[j - 1]) {
+                        dp[i][j] = dp[i - 1][j - 1];
+                    } else {
+                        dp[i][j] = Math.min(
+                            dp[i - 1][j] + 1,    
+                            dp[i][j - 1] + 1,    
+                            dp[i - 1][j - 1] + 1
+                        );
+                    }
+                }
+            }
+
+            const distance = dp[m][n];
+            const maxLength = Math.max(m, n);
+           
+            let score = Math.round(((maxLength - distance) / maxLength) * 100);
+            return Math.max(0, score);
+        }
+
+        function showResults() {
+            practiceScreen.style.display = 'none';
+            resultScreen.style.display = 'block';
+            reportContainer.innerHTML = '';
+
+            selectedQuiz.forEach((item, index) => {
+                const userText = userTranscripts[index] || "(聞き取れませんでした)";
+                const score = calculateScore(item.a, userText);
+                const isGood = score >= 70;
+
+                const audioBlob = userAudioBlobs[index];
+                let audioHtml = '';
+                if (audioBlob && userText !== "(聞き取れませんでした)") {
+                    const audioUrl = URL.createObjectURL(audioBlob);
+                    audioHtml = `<audio src="${audioUrl}" controls class="audio-player"></audio>`;
+                } else {
+                    audioHtml = `<div style="font-size:0.8rem; color:#94a3b8; margin-top:5px;">※録音データがありません</div>`;
+                }
+
+                const div = document.createElement('div');
+                div.className = "report-item";
+                div.innerHTML = `
+                    <div class="report-top">
+                        <span style="color:#2563eb;">Q${index + 1}. ${item.q}</span>
+                        <span style="background:${isGood ? '#dcfce7':'#fee2e2'}; color:${isGood ? '#166534':'#991b1b'}; padding:2px 8px; border-radius:4px; font-size:0.8rem;">構文一致度: ${score}%</span>
+                    </div>
+
+                    <div class="txt-label">模範解答例</div>
+                    <div class="model-ans">${item.a}</div>
+
+                    <div class="txt-label">AI文字起こし（あなたが喋った言葉）</div>
+                    <div class="user-ans ${isGood ? 'good':''}">${userText}</div>
+
+                    <div class="txt-label">あなたの録音（聞き返し）</div>
+                    ${audioHtml}
+
+                    <div class="comment-box">
+                        <div style="font-weight:bold; color:#1e40af; font-size:0.8rem;">💡 この問題の発音アドバイス</div>
+                        <div style="margin-top:3px;">${item.advice}</div>
+                    </div>
+                `;
+                reportContainer.appendChild(div);
+            });
+        }
+
+        function restartPractice() {
+            // 【追加】「もう一度挑戦する」の際にも、現在のスタート画面のセレクトボックスの状態を維持して開始可能
+            startPractice();
+        }
+    </script>
+</body>
+</html>

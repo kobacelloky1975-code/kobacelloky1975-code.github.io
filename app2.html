@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>厳選100問スピーキングトレーニング</title>
+    <style>
+        body { font-family: sans-serif; background-color: #f8fafc; color: #1e293b; margin: 0; padding: 0; display: flex; flex-direction: column; min-height: 100vh; }
+        header { background-color: #1d4ed8; color: white; padding: 15px; text-align: center; font-size: 1.2rem; font-weight: bold; }
+        main { flex-grow: 1; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .card { background: white; padding: 30px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); width: 100%; max-width: 550px; text-align: center; box-sizing: border-box; }
+        h2 { margin-top: 0; color: #0f172a; }
+        p { color: #475569; font-size: 0.95rem; line-height: 1.6; }
+        .btn { background-color: #1d4ed8; color: white; border: none; padding: 12px 35px; font-size: 1rem; border-radius: 25px; cursor: pointer; font-weight: bold; }
+        .btn:hover { background-color: #1e40af; }
+        .progress-bg { width: 100%; background: #e2e8f0; height: 8px; border-radius: 4px; margin-bottom: 15px; overflow: hidden; }
+        .progress-bar { background: #1d4ed8; height: 100%; width: 0%; transition: width 0.3s; }
+        .flex-space { display: flex; justify-content: space-between; font-size: 0.85rem; color: #64748b; margin-bottom: 20px; font-weight: bold; }
+        .q-text { font-size: 1.35rem; font-weight: bold; margin: 20px 0; color: #0f172a; min-height: 70px; display: flex; align-items: center; justify-content: center; line-height: 1.5; }
+        .btn-record { background-color: #ef4444; color: white; border: none; width: 80px; height: 80px; border-radius: 50%; cursor: pointer; font-size: 2rem; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(239,68,68,0.2); }
+        .recording { animation: pulse 1.2s infinite; background-color: #dc2626; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.06); } 100% { transform: scale(1); } }
+        .btn-next { background-color: #e2e8f0; color: #94a3b8; border: none; padding: 10px 25px; border-radius: 6px; cursor: not-allowed; float: right; font-weight: bold; }
+        .btn-next.active { background-color: #1d4ed8; color: white; cursor: pointer; }
+        .clearfix::after { content: ""; clear: both; display: table; }
+        .report-list { max-height: 400px; overflow-y: auto; text-align: left; margin-bottom: 25px; }
+        .report-item { border: 1px solid #e2e8f0; background: #f8fafc; padding: 15px; border-radius: 12px; margin-bottom: 15px; }
+        .report-top { display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 5px; font-weight: bold; }
+        .txt-label { font-size: 0.75rem; color: #64748b; margin-top: 8px; font-weight: bold; }
+        .model-ans { font-size: 1.05rem; font-style: italic; color: #1e3a8a; margin: 2px 0; font-weight: bold; }
+        .user-ans { font-size: 1.05rem; color: #dc2626; margin: 2px 0; font-weight: bold; }
+        .user-ans.good { color: #16a34a; }
+        .comment-box { background: #eff6ff; padding: 10px; border-radius: 6px; font-size: 0.85rem; color: #1e40af; border-left: 4px solid #3b82f6; margin-top: 8px; }
+        .audio-player { margin-top: 8px; width: 100%; height: 32px; }
+    </style>
+</head>
+<body>
+
+    <header>🗣️ 精選100フレーズ・英会話スピーキング</header>
+
+    <main>
+        <div id="start-screen" class="card">
+            <h2>本気の英語発話トレーニング</h2>
+            <p>厳選された<b>自然な日本語（約30文字）</b>が、100個のプールから毎回ランダムに10問出題されます。<br>マイクに向かって英語を話すと、自動で文字起こしされ、一致度を採点します。<br>結果画面では、<b>自分の録音を聞き返す</b>ことができます。</p>
+            <button id="btn-start" class="btn">トレーニングを始める</button>
+        </div>
+
+        <div id="practice-screen" class="card" style="display: none;">
+            <div class="progress-bg"><div id="progress-bar" class="progress-bar"></div></div>
+            <div class="flex-space">
+                <span id="question-number">第 1 問 / 10</span>
+                <span id="timer" style="color: #ef4444; display: none; font-weight: bold;">● 録音・解析中...</span>
+            </div>
+            <div style="font-size: 0.8rem; color: #1d4ed8; font-weight: bold; text-align: left;">お題の日本語</div>
+            <div id="question-text" class="q-text">読み込み中...</div>
+           
+            <div style="margin: 25px 0;">
+                <button id="btn-record" class="btn-record">🎤</button>
+                <p id="record-status" style="font-size: 0.9rem; color: #64748b; margin-top: 10px;">ボタンを押して、英語で喋ってください</p>
+                <div id="live-transcript" style="font-size: 1.1rem; font-weight: bold; color: #1d4ed8; margin-top: 10px; min-height: 24px;"></div>
+            </div>
+           
+            <div class="clearfix">
+                <button id="btn-next" class="btn-next" disabled>次へ進む →</button>
+            </div>
+        </div>
+
+        <div id="result-screen" class="card" style="display: none;">
+            <h2>🎉 トレーニング完了！</h2>
+            <p>今回の音声解析結果と、文字起こしされたデータです。プレイヤーでご自身の声を確認できます。</p>
+            <div id="report-container" class="report-list"></div>
+            <button id="btn-restart" class="btn">もう一度挑戦する</button>
+        </div>
+    </main>
+
+    <script>
+        // 厳選100問のプール
+        const questionPool = [
+            { q: "明日の午前中までにこのレポートを書き終えなければなりません。", a: "I must finish writing this report by tomorrow morning.", advice: "must finish の 't' は軽く発音し、次の 'f' へ滑らかに繋げましょう。" },
+            { q: "駅のすぐ近くにできた新しいカフェは、雰囲気がとても良いです。", a: "The new cafe near the station has a really nice atmosphere.", advice: "atmosphere（アトモスフィア）の 'ph' は 'f' の音になるよう意識して。" },
+            { q: "今週末に友達とバーベキューをするのですが、あなたも来ませんか？", a: "We are having a barbecue with friends this weekend, would you like to join us?", advice: "would you like to（ウッジューライクトゥ）をひひとまとめで発音して。" },
+            { q: "最近とても疲れやすいので、今日は仕事を早く切り上げて寝ます。", a: "I get tired easily lately, so I will finish work early and go to bed today.", advice: "finish work early の 'k' と 'e' を繋げて「ワーケアリー」のように。" },
+            { q: "すみませんが、ここから一番近いコンビニへの行き方を教えてください。", a: "Excuse me, could you tell me how to get to the nearest convenience store?", advice: "could you（クッジュー）や get to（ゲットゥー）のリンキングを意識。" },
+            { q: "私が子供の頃、この近くには大きな本屋がありましたが、今はもうないです。", a: "When I was a child, there was a big bookstore nearby, but it is gone now.", advice: "When I was a は「ウェナイワザ」のように一息で流れるように発音します。" },
+            { q: "英語のリスニング力を上げるために、毎日ポッドキャストを聞いています。", a: "I listen to podcasts every day to improve my English listening skills.", advice: "improve（インプルーヴ）の 'v' は下唇を軽く噛む基本の形を大切に。" },
+            { q: "来月の初めに一週間ほど休みを取って、北海道に旅行する予定です。", a: "I plan to take a week off at the beginning of next month to travel to Hokkaido.", advice: "take a week off は「テイカウィーコフ」と音が完全に結合します。" },
+            { q: "冷蔵庫の中に何も食べるものがないので、今からスーパーに行ってきます。", a: "There is nothing to eat in the refrigerator, so I am going to the supermarket now.", advice: "refrigerator（リフリッジレイター）のアクセントは 'fri' に置きます。" },
+            { q: "あの映画の結末がどうしても思い出せなくて、朝からずっとモヤモヤしています。", a: "I cannot remember the ending of that movie, and it has been bothering me all morning.", advice: "bothering（バザリング）の 'th' の濁る音を意識して発音しましょう。" },
+            { q: "私の趣味はカメラで、休みの日はよく公園に行って写真を撮っています。", a: "My hobby is photography, and I often go to the park to take pictures on my days off.", advice: "photography（フォトグラフィ）のアクセントは 'to' の部分にあります。" },
+            { q: "何か温かい飲み物を買ってきますが、あなたは何が良いですか？", a: "I am going to buy some hot drinks, what would you like?", advice: "what would you like は語尾を少し上げて質問らしく問いかけて。" },
+            { q: "東京駅はいつも多くの人で混雑しているので、迷子にならないか心配です。", a: "Tokyo Station is always crowded with many people, so I am worried about getting lost.", advice: "worried about は「ウォリードゥ・アバウト」ではなく「ウォリーダバウト」に。" },
+            { q: "その問題についてもっと詳しく知りたいので、資料を送ってもらえますか？", a: "I would like to know more details about that issue, so could you send me the documents?", advice: "details（ディーテイルズ）の最初の音をハキハキと強調しましょう。" },
+            { q: "スマートフォンの画面が割れてしまったので、週末に修理に行く予定です。", a: "My smartphone screen is cracked, so I plan to go to the repair shop this weekend.", advice: "cracked（クラックトゥ）の最後の 't' は息を鋭く出すイメージです。" },
+            { q: "彼女はいつも明るくて笑顔を絶やさないので、職場の人気者です。", a: "She is always cheerful and always smiles, so she is popular at work.", advice: "cheerful（チアフル）の 'l' は舌先を上の歯の付け根につけて止めて。" },
+            { q: "今日の夜ご飯は久しぶりに外食をして、お寿司を食べに行こうと思います。", a: "I think I will go out for dinner tonight and have some sushi for the first time in a while.", advice: "for the first time は「フォーダファースタイム」のように滑らかに。" },
+            { q: "来週までにこの本を読み終えて、図書館に返却しなければなりません。", a: "I have to finish reading this book and return it to the library by next week.", advice: "return it to は「リターン・イット・トゥ」ではなく「リターニットゥ」に。" },
+            { q: "パソコンの調子が悪いので、一度再起動してみようと思います。", a: "My computer is not working well, so I think I will try restarting it.", advice: "restarting it は「リスターティング・イット」ではなく「リスターティンギッ」に。" },
+            { q: "昨日は大雨のせいで電車が遅れて、会社に遅刻してしまいました。", a: "Yesterday, the train was delayed due to heavy rain, and I was late for work.", advice: "due to（デュートゥ）は理由を説明する際に便利な繋ぎ言葉です。" },
+            { q: "私は毎朝早く起きて、犬の散歩をしてから朝ご飯を食べています。", a: "I get up early every morning, walk my dog, and then eat breakfast.", advice: "get up early は「ゲッタッピアリー」のように一気に発音します。" },
+            { q: "彼が何を言いたいのかよく理解できなかったので、もう一度聞き返しました。", a: "I did not understand what he wanted to say well, so I asked him again.", advice: "what he wanted は 'h' が弱まり「ワッティウォンティドゥ」に聞こえます。" },
+            { q: "日本の夏はとても湿度が高いので、海外の友達はみんな驚きます。", a: "Summer in Japan is very humid, so my foreign friends are all surprised.", advice: "humid（ヒューミッド）の最初の音をクリアに発音しましょう。" },
+            { q: "将来は海外に移住して、現地のカフェで働きたいという夢があります。", a: "I have a dream of moving abroad in the future and working at a local cafe.", advice: "moving abroad は「ムーヴィング・アブロード」と音を繋げて。" },
+            { q: "この新しいゲームはとても面白くて、時間を忘れて遊んでしまいます。", a: "This new game is so interesting that I forget about time and play it.", advice: "interesting（インタレスティング）の 'te' はほぼ発音されません。" },
+            { q: "ジムに通い始めたのですが、筋肉痛がひどくて毎日は続けられません。", a: "I started going to the gym, but the muscle pain is so bad that I cannot continue every day.", advice: "started going の 'd' と 'g' を滑らかに移行させて。" },
+            { q: "あのレストランはいつも大行列なので、事前に予約した方が良いですよ。", a: "That restaurant always has a long line, so you should make a reservation in advance.", advice: "make a reservation は「メイカレザヴェイション」と繋げます。" },
+            { q: "子供たちが庭で楽しそうにサッカーをしているのが窓から見えます。", a: "I can see the children happily playing soccer in the yard from the window.", advice: "happily（ハピリィ）の 'h' をしっかり息を吐いて発音して。" },
+            { q: "このお菓子は甘さ控えめでとても美味しいので、ダイエット中のおすすめです。", a: "This sweet is not too sweet and very delicious, so it is recommended for people on a diet.", advice: "not too sweet の 't' の連続をすっきりと発音します。" },
+            { q: "クレジットカードを失くしてしまったので、すぐにカード会社に電話します。", a: "I lost my credit card, so I will call the card company right away.", advice: "right away は「ライト・アウェイ」ではなく「ライタウェイ」に。" },
+            { q: "彼女への誕生日プレゼントを何にするか、もう一週間も悩んでいます。", a: "I have been wondering what to get her for her birthday present for a week.", advice: "wondering what は「ワンダリング・ワット」とリズミカルに。" },
+            { q: "今夜のミーティングの開始時間が変更になったことを、全員に伝えてください。", a: "Please tell everyone that the start time of tonight's meeting has changed.", advice: "Please tell everyone の流れを一つの息で発声して。" },
+            { q: "車を運転するときは、歩行者に十分気をつけるようにしています。", a: "I try to be very careful of pedestrians when I drive a car.", advice: "pedestrians（ペデストリアンズ）のアクセントは 'de' にあります。" },
+            { q: "映画館で映画を見るときは、いつも一番後ろの席を選ぶようにしています。", a: "When I watch a movie at the theater, I always try to choose the back row seats.", advice: "choose the（チューズダ）の濁る音の流れを意識して。" },
+            { q: "英語で自分の意見をはっきりと伝えるのは、私にとってまだ難しいです。", a: "It is still difficult for me to express my opinion clearly in English.", advice: "express my opinion は「エクスプレスマイオピニオン」と滑らかに。" },
+            { q: "明日は早く家を出なければならないので、今夜は準備をして早く寝ます。", a: "I have to leave home early tomorrow, so I will get ready and go to bed early tonight.", advice: "leave home は 'h' が弱まり「リーヴオウム」のようになることも。" },
+            { q: "新しい靴を買ったばかりなのに、雨の日に履いて汚れてしまいました。", a: "I just bought new shoes, but I wore them on a rainy day and they got dirty.", advice: "wore them は「ウォアゼム」とコンパクトに発音します。" },
+            { q: "この料理のレシピはとても簡単なので、料理が苦手な人でも作れます。", a: "The recipe for this dish is very simple, so even people who are not good at cooking can make it.", advice: "not good at は「ノット・グッド・アット」ではなく「ノッグダッ」に。" },
+            { q: "オンライン英会話のレッスンを始めてから、少しずつ話せるようになりました。", a: "Since I started online English lessons, I have become able to speak little by little.", advice: "little by little は「リトルバイリトル」の 't' を弾くように。" },
+            { q: "お腹がいっぱいになったので、残った料理を持ち帰ることはできますか？", a: "I am full, so is it possible to take the remaining food home?", advice: "is it possible は「イズィッポッシブル」と繋がります。" },
+            { q: "そのプロジェクトのスケジュールについて、明日詳しく話し合いましょう。", a: "Let's discuss the project schedule in detail tomorrow.", advice: "discuss（ディスカス）の後半にアクセントを置きます。" },
+            { q: "彼はとても親切な人で、困っている人がいるとすぐに助けてくれます。", a: "He is a very kind person, and he helps people in trouble right away.", advice: "people in trouble の 'le' と 'in' を繋げて「ピーポリン」に。" },
+            { q: "最近、目が疲れやすいので、パソコンを使うときは休憩を入れるようにしています。", a: "Lately, my eyes get tired easily, so I try to take a break when using a computer.", advice: "take a break は「テイカブレイク」とリンキングします。" },
+            { q: "このお寺は400年前に建てられたもので、世界中から観光客が来ます。", a: "This temple was built four hundred years ago, and tourists come from all over the world.", advice: "all over the world は「オーローヴァダワールド」と滑らかに。" },
+            { q: "急な用事ができてしまったので、今日の約束をキャンセルさせてください。", a: "Something urgent came up, so please let me cancel today's appointment.", advice: "urgent（アージェント）の最初の 'u' を強く発音します。" },
+            { q: "私はクラシック音楽を聞くのが好きで、週末はよくコンサートに行きます。", a: "I like listening to classical music, and I often go to concerts on weekends.", advice: "listening to の 't' は発音せず「リスニングトゥ」になります。" },
+            { q: "彼女から連絡が来ないか心配で、何度もスマートフォンを確認してしまいます。", a: "I am worried about not hearing from her, so I check my smartphone many times.", advice: "hearing from の 'g' と 'f' の移行をスムーズに。" },
+            { q: "このバッグはデザインが素敵なだけでなく、ポケットが多くて実用的です。", a: "This bag not only has a great design but is also practical with many pockets.", advice: "not only は「ノット・オンリー」ではなく「ノトニィ」のように。" },
+            { q: "新しい企画のアイデアが全く浮かばないので、少し散歩して気分転換します。", a: "I have no ideas for the new project at all, so I will take a walk to change my mood.", advice: "at all は「アット・オール」ではなく「アトール」と繋がります。" },
+            { q: "子供の頃に習っていたピアノを、大人になった今もう一度始めたいです。", a: "I want to start playing the piano again now that I am an adult.", advice: "now that I am は「ナウザッタイム」のように繋がります。" },
+            { q: "あのスーパーは夜遅くまで営業しているので、仕事帰りに立ち寄れて便利です。", a: "That supermarket is open until late at night, so it is convenient to stop by after work.", advice: "stop by は「ストップ・バイ」の 'p' を破裂させずに止めて。" },
+            { q: "健康のために、なるべくエスカレーターを使わずに階段を上るようにしています。", a: "For my health, I try to use the stairs as much as possible without using the escalator.", advice: "as much as possible は「アズマッチァズポッシブル」に。" },
+            { q: "昨日の夜は風がとても強くて、窓の音がうるさくてなかなか眠れませんでした。", a: "The wind was very strong last night, and I could not sleep well because of the window noise.", advice: "because of は「ビコーズ・オブ」ではなく「ビコーゾブ」と繋げます。" },
+            { q: "彼がおすすめしてくれた小説が面白すぎて、一晩で一気に読んでしまいました。", a: "The novel he recommended to me was so interesting that I read it all in one night.", advice: "read it all は「リード・イット・オール」ではなく「リーディトール」に。" },
+            { q: "来週のプレゼンテーションの準備のために、今日の午後は資料を集めます。", a: "I will collect materials this afternoon to prepare for next week's presentation.", advice: "prepare for（プリペアフォー）の 'r' の連続に気をつけて。" },
+            { q: "海外旅行に行く前には、現地の文化やマナーについて調べるようにしています。", a: "Before traveling abroad, I try to research the local culture and manners.", advice: "traveling abroad は「トラヴェリング・アブロード」と滑らかに。" },
+            { q: "このズボンは少しサイズが大きいので、ベルトをしないと落ちてしまいます。", a: "These pants are a bit big for me, so they will fall down if I do not wear a belt.", advice: "a bit big は「ア・ビット・ビッグ」の 't' を飲み込むように。" },
+            { q: "彼女はフランス語がペラペラで、いつか彼女のように話せるようなりたいです。", a: "She speaks fluent French, and I want to be able to speak like her someday.", advice: "fluent（フルーエント）の最初の音をハキハキと発音して。" },
+            { q: "この街は自然が豊かで静かなので、子育てをするには最高の場所です。", a: "This town is rich in nature and quiet, so it is the best place to raise children.", advice: "rich in は「リッチ・イン」ではなく「リッチィン」と繋がります。" },
+            { q: "友達へのメールの返信をすっかり忘れていたことに、今気がつきました。", a: "I just realized that I completely forgot to reply to my friend's email.", advice: "just realized は「ジャスト・リアライズドゥ」の 't' が消えます。" },
+            { q: "来年こそは英検準一級に合格できるように、毎日コツコツ勉強します。", a: "I will study hard every day so that I can pass the Eiken Pre-first grade next year.", advice: "study hard の 'y' と 'h' をスムーズに繋げて。" },
+            { q: "あの店員さんはいつも丁寧な対応をしてくれるので、また行きたくなります。", a: "That clerk always treats customers politely, so I want to go there again.", advice: "clerk（クラーク）の 'r' の響きを大切に。" },
+            { q: "会議の議事録をまとめましたので、間違いがないか確認をお願いします。", a: "I have summarized the meeting minutes, so please check if there are any mistakes.", advice: "minutes（ミニッツ）の語尾の 's' をしっかり発音して。" },
+            { q: "最近は物価が高くなっているので、毎月の生活費を節約しなければなりません。", a: "Prices have been rising lately, so I have to save on monthly living expenses.", advice: "save on は「セーヴ・オン」ではなく「セィヴォン」と繋がります。" },
+            { q: "彼はサッカーの才能があるだけでなく、誰よりも努力を重ねています。", a: "He not only has a talent for soccer but also practices harder than anyone else.", advice: "talent for は「タレント・フォー」ではなく「タレントォ」に。" },
+            { q: "この映画は涙なしには見られないほど感動的で、ハンカチが必要です。", a: "This movie is so moving that you cannot watch it without crying, so you need a handkerchief.", advice: "handkerchief（ハンカチーフ）の 'd' は発音しません。" },
+            { q: "インターネットで注文した商品が、予定より二日も早く家に届きました。", a: "The product I ordered online arrived at my house two days earlier than scheduled.", advice: "arrived at は「アライヴドゥ・アット」ではなく「アライヴダッ」に。" },
+            { q: "そのアイディアは素晴らしいと思いますが、予算が足りるかどうかが問題です。", a: "I think that idea is wonderful, but the problem is whether the budget is enough.", advice: "whether the（ウェザーダ）の舌の動きをスムーズに。" },
+            { q: "彼女が新しい髪型にしていたのに気づけなくて、不機嫌にさせてしまいました。", a: "I did not notice her new hairstyle, and it made her in a bad mood.", advice: "made her は 'h' が弱まり「メイダー」のように聞こえます。" },
+            { q: "このスマートウォッチは、歩数だけでなく睡眠の質も記録してくれます。", a: "This smartwatch records not only your steps but also your sleep quality.", advice: "quality（クオリティ）の 'l' の弾きを意識して。" },
+            { q: "明日までにやらなければならない仕事が山積みで、今夜は残業になりそうです。", a: "I have a mountain of work to do by tomorrow, so I think I will work overtime tonight.", advice: "mountain of は「マウンテン・オブ」ではなく「マウンテノブ」に。" },
+            { q: "外国の友達が日本に来るので、京都の有名なお寺を案内する予定です。", a: "My foreign friend is coming to Japan, so I plan to show them around famous temples in Kyoto.", advice: "show them around は「ショウゼマラウンド」と繋がります。" },
+            { q: "コーヒーに砂糖とミルクを入れますか、それともブラックのままが良いですか？", a: "Would you like sugar and milk in your coffee, or do you prefer it black?", advice: "sugar and milk は「シュガーアンミルク」と軽快に。" },
+            { q: "この靴は見た目はかっこいいのですが、長時間歩くと足が痛くなります。", a: "These shoes look cool, but my feet hurt when I walk for a long time.", advice: "look cool の 'k' と 'c' の重なりをすっきりと。" },
+            { q: "彼が嘘をついているとはどうしても思えないほど、彼の目は真剣でした。", a: "His eyes were so serious that I could not believe he was telling a lie.", advice: "telling a lie は「テリング・ア・ライ」ではなく「テリンガライ」に。" },
+            { q: "昨日から風邪気味で喉がとても痛いので、今日は温かい生姜湯を飲みます。", a: "I have a slight cold and a sore throat since yesterday, so I will drink hot ginger tea today.", advice: "sore throat（ソアスロート）の 'thr' の発音に注意して。" },
+            { q: "この駅で乗り換えをしなければならないのですが、どのホームに行けば良いですか？", a: "I have to transfer at this station, so which platform should I go to?", advice: "transfer（トランスファー）の 'fa' にアクセントを。" },
+            { q: "彼女が作った手作りケーキは、まるでお店で買ったかのように美味しかったです。", a: "The homemade cake she made was as delicious as if it were bought at a shop.", advice: "as delicious as は「アズ・デリシャス・アズ」を一息で。" },
+            { q: "子供たちが静かに本を読んでいると思ったら、いつの間にか寝ていました。", a: "I thought the children were reading books quietly, but they fell asleep before I knew it.", advice: "fell asleep は「フェル・アスリープ」ではなく「フェラスリープ」に。" },
+            { q: "このアプリを使えば、毎日の支出を自動でグラフにしてくれるので便利です。", a: "If you use this app, it automatically graphs your daily expenses, so it is convenient.", advice: "daily expenses（デイリー・エクスぺンシズ）をハキハキと。" },
+            { q: "急な予定変更でご迷惑をおかけしてしまい、大変申し訳ございませんでした。", a: "I am very sorry for causing you trouble due to the sudden schedule change.", advice: "causing you は「コージング・ユー」より「コージンジュー」に近く。" },
+            { q: "彼は自分の間違いを素直に認めて謝罪したので、みんな彼を許しました。", a: "He honestly admitted his mistake and apologized, so everyone forgave him.", advice: "admitted his は 'h' が落ちて「アドミッティディズ」のように。" },
+            { q: "この電子レンジは使い方が複雑すぎて、説明書を読んでもよく分かりません。", a: "The way to use this microwave is too complex to understand even if I read the manual.", advice: "too complex to は「トゥー・コンプレックス・トゥ」とリズム良く。" },
+            { q: "彼女が新しい会社を立ち上げたと聞いたので、お祝いのメッセージを送りました。", a: "I heard that she started a new company, so I sent her a congratulatory message.", advice: "congratulatory（コングラチュラトリー）の発音を慎重に。" },
+            { q: "このデザインのシャツは、どんな服にも合わせやすいので重宝しています。", a: "This designed shirt is useful because it is easy to match with any clothes.", advice: "match with は「マッチ・ウィズ」の語尾をすっきりと。" },
+            { q: "彼はいつも締め切り厳守なので、彼と一緒に仕事をすると安心感があります。", a: "He always meets deadlines, so I feel secure working with him.", advice: "meets deadlines の 'ts' と 'd' の繋がりを意識して。" },
+            { q: "週末の天気が良ければ、山に登って美しい景色を写真に収めたいです。", a: "If the weather is good this weekend, I want to climb a mountain and take photos of the beautiful scenery.", advice: "climb（クライム）の 'b' は発音しない点に注意。" },
+            { q: "英語を話すときは、間違えることを恐れずに大きな声で堂々と話すことが大切です。", a: "When speaking English, it is important to speak up confidently without being afraid of making mistakes.", advice: "speak up は「スピーク・アップ」ではなく「スピーカップ」と繋げます。" },
+            { q: "あの人気のパン屋さんは、開店と同時にすべての食パンが売り切れてしまいます。", a: "That popular bakery sells out of all its bread as soon as it opens.", advice: "sells out of は「セルズ・アウト・オブ」ではなく「セルザウトブ」に。" },
+            { q: "スマートフォンの充電が切れそうなので、どこかで充電器を借りることはできますか？", a: "My smartphone is running out of battery, so can I borrow a charger somewhere?", advice: "running out of は「ランニング・アウト・オブ」ではなく「ランニナウトブ」に Rhodes。" },
+            { q: "今回の出張はスケジュールがタイトで、観光する時間は全くありませんでした。", a: "The schedule for this business trip was so tight that I had no time for sightseeing at all.", advice: "sightseeing（サイトシーイング）の音をクリアに。" },
+            { q: "新しい環境に慣れるまでは大変ですが、無理をせずに自分のペースで進めてください。", a: "It is hard until you get used to the new environment, but please go at your own pace without pushing yourself.", advice: "get used to は「ゲット・ユーズドゥ・トゥ」ではなく「ゲッユーストゥ」に。" },
+            { q: "彼女がコンクールで優勝したという知らせを聞いて、自分のことのように嬉しかったです。", a: "Hearing the news that she won the contest, I was as happy as if it were my own success.", advice: "won the は「ワン・ザ」ではなく「ワンダ」と音が繋がります。" },
+            { q: "この小説は伏線がたくさん回収されるので、二回目を読むとさらに面白いです。", a: "This novel has a lot of foreshadowing, so it is even more interesting to read a second time.", advice: "foreshadowing（フォアシャドウイング）の 'sh' の音を意識。" },
+            { q: "友達に勧められた新しい海外ドラマにハマってしまい、寝不足の日々が続いています。", a: "I am hooked on a new foreign drama recommended by my friend, and I am suffering from a lack of sleep.", advice: "hooked on は「フックト・オン」ではなく「フックトン」と繋がります。" },
+            { q: "この料理には隠し味として少量のハチミツが使われているので、コクがあります。", a: "A small amount of honey is used as a secret ingredient in this dish, so it tastes rich.", advice: "amount of は「アマウント・オブ」ではなく「アマウントブ」に。" },
+            { q: "来週の土曜日に引っ越しをするので、段ボール箱をいくつか集めなければなりません。", a: "I am moving next Saturday, so I have to collect some cardboard boxes.", advice: "moving next の 'g' と 'n' の移行を滑らかに。" },
+            { q: "彼はどんなに忙しくても、週に一回は必ずジムに行って汗を流しています。", a: "No matter how busy he is, he always goes to the gym once a week to work out.", advice: "once a week は「ワンス・ア・ウィーク」ではなく「ワンサウィーク」に。" },
+            { q: "この歴史ある建物は、地震に耐えられるように特別な補強工事が施されています。", a: "This historic building has been specially reinforced to withstand earthquakes.", advice: "withstand（ウィズスタンド）の 'th' の音に気をつけて。" },
+            { q: "最後まで諦めずに努力を続けたことが、今回の大きな成功に繋がったのだと思います。", a: "I believe that continuing to make efforts without giving up until the end led to this great success.", advice: "giving up は「ギヴィング・アップ」ではなく「ギヴィンガップ」と繋がります。" }
+        ];
+
+        let selectedQuiz = [];
+        let currentIdx = 0;
+        let isRecording = false;
+       
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        let recognition = null;
+       
+        if (SpeechRecognition) {
+            recognition = new SpeechRecognition();
+            recognition.lang = 'en-US';
+            recognition.continuous = true;
+            recognition.interimResults = true;
+        }
+
+        // 録音用（MediaRecorder）の変数
+        let mediaRecorder = null;
+        let audioChunks = [];
+        let userAudioBlobs = []; // 10問分の録音データを保存する配列
+        let userTranscripts = [];
+
+        const startScreen = document.getElementById('start-screen');
+        const practiceScreen = document.getElementById('practice-screen');
+        const resultScreen = document.getElementById('result-screen');
+        const btnStart = document.getElementById('btn-start');
+        const btnRecord = document.getElementById('btn-record');
+        const btnNext = document.getElementById('btn-next');
+        const btnRestart = document.getElementById('btn-restart');
+        const questionNumber = document.getElementById('question-number');
+        const questionText = document.getElementById('question-text');
+        const progressBar = document.getElementById('progress-bar');
+        const timerStatus = document.getElementById('timer');
+        const recordStatus = document.getElementById('record-status');
+        const liveTranscript = document.getElementById('live-transcript');
+        const reportContainer = document.getElementById('report-container');
+
+        btnStart.onclick = startPractice;
+        btnRecord.onclick = toggleRecording;
+        btnNext.onclick = nextQuestion;
+        btnRestart.onclick = restartPractice;
+
+        function getTenRandomQuestions() {
+            return [...questionPool].sort(() => 0.5 - Math.random()).slice(0, 10);
+        }
+
+        function startPractice() {
+            if (!recognition) {
+                alert("お使いのブラウザや環境は音声認識に対応していません。Google Chromeでお試しください。");
+                return;
+            }
+            // マイク権限とMediaRecorderの初期化を試みる
+            navigator.mediaDevices.getUserMedia({ audio: true })
+                .then(stream => {
+                    setupMediaRecorder(stream);
+                    selectedQuiz = getTenRandomQuestions();
+                    currentIdx = 0;
+                    userTranscripts = [];
+                    userAudioBlobs = []; // 初期化
+                   
+                    startScreen.style.display = 'none';
+                    resultScreen.style.display = 'none';
+                    practiceScreen.style.display = 'block';
+                    loadQuestion();
+                })
+                .catch(err => {
+                    alert("マイクの使用が許可されていないか、マイクが見つかりません。");
+                    console.error(err);
+                });
+        }
+
+        function setupMediaRecorder(stream) {
+            mediaRecorder = new MediaRecorder(stream);
+           
+            mediaRecorder.ondataavailable = (event) => {
+                if (event.data.size > 0) {
+                    audioChunks.push(event.data);
+                }
+            };
+
+            mediaRecorder.onstop = () => {
+                // 録音データをBlobオブジェクトにして配列に保存
+                const audioBlob = new Blob(audioChunks, { type: 'audio/mp3' });
+                userAudioBlobs[currentIdx] = audioBlob;
+                audioChunks = []; // 次回用にクリア
+            };
+        }
+
+        function loadQuestion() {
+            questionNumber.textContent = `第 ${currentIdx + 1} 問 / 10`;
+            questionText.textContent = selectedQuiz[currentIdx].q;
+            progressBar.style.width = `${((currentIdx + 1) / 10) * 100}%`;
+           
+            btnNext.disabled = true;
+            btnNext.className = "btn-next";
+            recordStatus.textContent = "ボタンを押して、マイクに向かって英語で喋ってください";
+            liveTranscript.textContent = "";
+            btnRecord.className = "btn-record";
+            timerStatus.style.display = 'none';
+        }
+
+        function toggleRecording() {
+            if (!isRecording) {
+                try {
+                    liveTranscript.textContent = "（聞き取り中...）";
+                    userTranscripts[currentIdx] = "";
+                    userAudioBlobs[currentIdx] = null; // 古い録音データをクリア
+                    audioChunks = [];
+                   
+                    // 音声認識と実際の録音を同時にスタート
+                    recognition.start();
+                    if (mediaRecorder && mediaRecorder.state === "inactive") {
+                        mediaRecorder.start();
+                    }
+                } catch (e) {
+                    console.log(e);
+                }
+            } else {
+                recognition.stop();
+                if (mediaRecorder && mediaRecorder.state === "recording") {
+                    mediaRecorder.stop();
+                }
+            }
+        }
+
+        if (recognition) {
+            recognition.onstart = () => {
+                isRecording = true;
+                btnRecord.className = "btn-record recording";
+                recordStatus.textContent = "＼ 録音中 ／ 話し終えたら、もう一度ボタンを押して停止";
+                timerStatus.style.display = 'inline';
+            };
+
+            recognition.onresult = (event) => {
+                let interimTranscript = '';
+                let finalTranscript = '';
+
+                for (let i = 0; i < event.results.length; ++i) {
+                    if (event.results[i].isFinal) {
+                        finalTranscript += event.results[i][0].transcript + ' ';
+                    } else {
+                        interimTranscript += event.results[i][0].transcript;
+                    }
+                }
+               
+                const fullText = (finalTranscript + interimTranscript).trim();
+                liveTranscript.textContent = fullText;
+                userTranscripts[currentIdx] = fullText;
+            };
+
+            recognition.onend = () => {
+                isRecording = false;
+                btnRecord.className = "btn-record";
+                timerStatus.style.display = 'none';
+               
+                // もしボタン押し忘れなどでMediaRecorderが動きっぱなしなら止める
+                if (mediaRecorder && mediaRecorder.state === "recording") {
+                    mediaRecorder.stop();
+                }
+
+                if (!userTranscripts[currentIdx] || userTranscripts[currentIdx].trim() === "") {
+                    userTranscripts[currentIdx] = "(聞き取れませんでした)";
+                    recordStatus.textContent = "うまく聞き取れませんでした。もう一度お試しいただくか、次へ進んでください。";
+                } else {
+                    recordStatus.textContent = "聞き取り完了！下部にあなたの英語が表示されています。";
+                }
+               
+                btnNext.disabled = false;
+                btnNext.className = "btn-next active";
+            };
+
+            recognition.onerror = (event) => {
+                if(event.error === 'not-allowed') {
+                    alert("マイクの使用が許可されていません。");
+                }
+            };
+        }
+
+        function nextQuestion() {
+            if (currentIdx < 9) {
+                currentIdx++;
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function calculateScore(model, user) {
+            if (!user || user.includes("聞き取れませんでした")) return 0;
+           
+            const cleanWords = (str) => str.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"").split(/\s+/).filter(Boolean);
+            const modelWords = cleanWords(model);
+            const userWords = cleanWords(user);
+           
+            let matchCount = 0;
+            modelWords.forEach(w => {
+                if (userWords.includes(w)) {
+                    matchCount++;
+                }
+            });
+           
+            let score = Math.round((matchCount / modelWords.length) * 100);
+            return Math.min(score, 100);
+        }
+
+        function showResults() {
+            practiceScreen.style.display = 'none';
+            resultScreen.style.display = 'block';
+            reportContainer.innerHTML = '';
+
+            selectedQuiz.forEach((item, index) => {
+                const userText = userTranscripts[index] || "(聞き取れませんでした)";
+                const score = calculateScore(item.a, userText);
+                const isGood = score >= 60;
+
+                // 録音データ（Blob）から再生用URLを生成
+                const audioBlob = userAudioBlobs[index];
+                let audioHtml = '';
+                if (audioBlob && userText !== "(聞き取れませんでした)") {
+                    const audioUrl = URL.createObjectURL(audioBlob);
+                    audioHtml = `<audio src="${audioUrl}" controls class="audio-player"></audio>`;
+                } else {
+                    audioHtml = `<div style="font-size:0.8rem; color:#94a3b8; margin-top:5px;">※録音データがありません</div>`;
+                }
+
+                const div = document.createElement('div');
+                div.className = "report-item";
+                div.innerHTML = `
+                    <div class="report-top">
+                        <span style="color:#1d4ed8;">Q${index + 1}. ${item.q}</span>
+                        <span style="background:${isGood ? '#dcfce7':'#fee2e2'}; color:${isGood ? '#166534':'#991b1b'}; padding:2px 8px; border-radius:4px; font-size:0.8rem;">一致度: ${score}%</span>
+                    </div>
+                   
+                    <div class="txt-label">模範解答例</div>
+                    <div class="model-ans">${item.a}</div>
+                   
+                    <div class="txt-label">AI文字起こし（あなたが喋った言葉）</div>
+                    <div class="user-ans ${isGood ? 'good':''}">${userText}</div>
+                   
+                    <div class="txt-label">あなたの録音（聞き返し）</div>
+                    ${audioHtml}
+                   
+                    <div class="comment-box">
+                        <div style="font-weight:bold; color:#1e40af; font-size:0.8rem;">💡 この問題の発音アドバイス</div>
+                        <div style="margin-top:3px;">${item.advice}</div>
+                    </div>
+                `;
+                reportContainer.appendChild(div);
+            });
+        }
+
+        function restartPractice() {
+            startPractice();
+        }
+    </script>
+</body>
+</html>

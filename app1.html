@@ -431,8 +431,12 @@
                         <span style="background:${isGood ? '#dcfce7':'#fee2e2'}; color:${isGood ? '#166534':'#991b1b'}; padding:2px 8px; border-radius:4px; font-size:0.8rem;">一致度: ${score}%</span>
                     </div>
 
-                    <div class="txt-label">模範解答例</div>
-                    <div class="model-ans">${item.a}</div>
+                    // <div class="txt-label">模範解答例</div>
+                    // <div class="model-ans">${item.a}</div>
+
+                    <!-- タップできることを示すガイド文に変更 -->
+                    <div class="txt-label">模範解答例（タップで音読 🔊）</div>
+                    <div class="model-ans" onclick="speakText(this.dataset.ans)" data-ans="${item.a.replace(/"/g, '&quot;')}" style="cursor:pointer;" title="クリックでお手本音声を再生">${item.a} 🔊</div>
 
                     <div class="txt-label">AI文字起こし（あなたが喋った言葉）</div>
                     <div class="user-ans ${isGood ? 'good':''}">${userText}</div>
@@ -450,8 +454,23 @@
         }
 
         function restartPractice() {
-            startPractice();
         }
+
+        // 模範解答をネイティブ音声で読み上げる関数
+        function speakText(text) {
+           if ('speechSynthesis' in window) {
+               // すでに別の音声が流れていたら即座に停止して上書きする
+              window.speechSynthesis.cancel();
+       
+              const utterance = new SpeechSynthesisUtterance(text);
+              utterance.lang = 'en-US'; // 英語（米国）
+              utterance.rate = 0.95;    // ほんの少しだけゆっくり（聞き取りやすさ重視）
+              window.speechSynthesis.speak(utterance);
+           } else {
+              alert("お使いのブラウザは音声読み上げに対応していません。Google Chrome等でお試しください。");
+           }
+　　　　　}
+        
     </script>
 </body>
 </html>

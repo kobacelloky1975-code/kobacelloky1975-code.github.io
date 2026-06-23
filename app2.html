@@ -27,13 +27,16 @@
         .report-item { border: 1px solid #e2e8f0; background: #f8fafc; padding: 15px; border-radius: 12px; margin-bottom: 15px; }
         .report-top { display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 5px; font-weight: bold; }
         .txt-label { font-size: 0.75rem; color: #64748b; margin-top: 8px; font-weight: bold; }
-        .model-ans { font-size: 1.05rem; font-style: italic; color: #1e3a8a; margin: 2px 0; font-weight: bold; }
+       
+        /* 模範解答にホバー時の演出を追加 */
+        .model-ans { font-size: 1.05rem; font-style: italic; color: #1e3a8a; margin: 2px 0; font-weight: bold; transition: color 0.2s; }
+        .model-ans:hover { color: #2563eb; }
+
         .user-ans { font-size: 1.05rem; color: #dc2626; margin: 2px 0; font-weight: bold; }
         .user-ans.good { color: #16a34a; }
         .comment-box { background: #eff6ff; padding: 10px; border-radius: 6px; font-size: 0.85rem; color: #1e40af; border-left: 4px solid #3b82f6; margin-top: 8px; }
         .audio-player { margin-top: 8px; width: 100%; height: 32px; }
 
-        /* 追加したセレクトボックスのスタイル */
         .select-wrapper { margin: 20px 0 25px 0; }
         .select-count { padding: 10px 20px; font-size: 1rem; border-radius: 8px; border: 2px solid #cbd5e1; font-weight: bold; color: #1e293b; outline: none; cursor: pointer; }
         .select-count:focus { border-color: #1d4ed8; }
@@ -114,7 +117,7 @@
             { q: "その問題についてもっと詳しく知りたいので、資料を送ってもらえますか？", a: "I would like to know more details about that issue, so could you send me the documents?", advice: "details（ディーテイルズ）の最初の音をハキハキと強調しましょう。" },
             { q: "スマートフォンの画面が割れてしまったので、週末に修理に行く予定です。", a: "My smartphone screen is cracked, so I plan to go to the repair shop this weekend.", advice: "cracked（クラックトゥ）の最後の 't' は息を鋭く出すイメージです。" },
             { q: "彼女はいつも明るくて笑顔を絶やさないので、職場の人気者です。", a: "She is always cheerful and always smiles, so she is popular at work.", advice: "cheerful（チアフル）の 'l' は舌先を上の歯の付け根につけて止めて。" },
-            { q: "今日の夜ご飯は久しぶりに外食をして、お寿司を食べに行こうと思います。", a: "I think I will go out for dinner tonight and have some sushi for the first time in a while.", advice: "for the first time は「フォーダファースタイム」のように滑らかに。" },
+            { q: "今日の夜ご飯は久しぶりに外食をして、お寿司を食べに行おうと思います。", a: "I think I will go out for dinner tonight and have some sushi for the first time in a while.", advice: "for the first time は「フォーダファースタイム」のように滑らかに。" },
             { q: "来週までにこの本を読み終えて、図書館に返却しなければなりません。", a: "I have to finish reading this book and return it to the library by next week.", advice: "return it to は「リターン・イット・トゥ」ではなく「リターニットゥ」に。" },
             { q: "パソコンの調子が悪いので、一度再起動してみようと思います。", a: "My computer is not working well, so I think I will try restarting it.", advice: "restarting it は「リスターティング・イット」ではなく「リスターティンギッ」に。" },
             { q: "昨日は大雨のせいで電車が遅れて、会社に遅刻してしまいました。", a: "Yesterday, the train was delayed due to heavy rain, and I was late for work.", advice: "due to（デュートゥ）は理由を説明する際に便利な繋ぎ言葉です。" },
@@ -140,7 +143,7 @@
             { q: "お腹がいっぱいになったので、残った料理を持ち帰ることはできますか？", a: "I am full, so is it possible to take the remaining food home?", advice: "is it possible は「イズィッポッシブル」と繋がります。" },
             { q: "そのプロジェクトのスケジュールについて、明日詳しく話し合いましょう。", a: "Let's discuss the project schedule in detail tomorrow.", advice: "discuss（ディスカス）の後半にアクセントを置きます。" },
             { q: "彼はとても親切な人で、困っている人がいるとすぐに助けてくれます。", a: "He is a very kind person, and he helps people in trouble right away.", advice: "people in trouble の 'le' と 'in' を繋げて「ピーポリン」に。" },
-            { q: "最近、目が疲れやすいので、パソコンを使うときは休憩を入れるようにしています。", a: "Lately, my eyes get tired easily, so I try to take a break when using a computer.", advice: "take a break は「テイカブレイク」とリンキングします。" },
+            { q: "最近、目が疲れやすいので、パソコンを使うときは休憩を入れるようにしています。", a: "Lately, my eyes get tired easily, so I try to take a break when using a computer.", advice: "take a break は「テイカブレイク」とリンキングします Rhodes。" },
             { q: "このお寺は400年前に建てられたもので、世界中から観光客が来ます。", a: "This temple was built four hundred years ago, and tourists come from all over the world.", advice: "all over the world は「オーローヴァダワールド」と滑らかに。" },
             { q: "急な用事ができてしまったので、今日の約束をキャンセルさせてください。", a: "Something urgent came up, so please let me cancel today's appointment.", advice: "urgent（アージェント）の最初の 'u' を強く発音します。" },
             { q: "私はクラシック音楽を聞くのが好きで、週末はよくコンサートに行きます。", a: "I like listening to classical music, and I often go to concerts on weekends.", advice: "listening to の 't' は発音せず「リスニングトゥ」になります。" },
@@ -190,7 +193,7 @@
             { q: "スマートフォンの充電が切れそうなので、どこかで充電器を借りることはできますか？", a: "My smartphone is running out of battery, so can I borrow a charger somewhere?", advice: "running out of は「ランニング・アウト・オブ」ではなく「ランニナウトブ」に Rhodes。" },
             { q: "今回の出張はスケジュールがタイトで、観光する時間は全くありませんでした。", a: "The schedule for this business trip was so tight that I had no time for sightseeing at all.", advice: "sightseeing（サイトシーイング）の音をクリアに。" },
             { q: "新しい環境に慣れるまでは大変ですが、無理をせずに自分のペースで進めてください。", a: "It is hard until you get used to the new environment, but please go at your own pace without pushing yourself.", advice: "get used to は「ゲット・ユーズドゥ・トゥ」ではなく「ゲッユーストゥ」に。" },
-            { q: "彼女がコンクールで優勝したという知らせを聞いて、自分のことのように嬉しかったです。", a: "Hearing the news that she won the contest, I was as happy as if it were my own success.", advice: "won the は「ワン・ザ」ではなく「ワンダ」と音が繋がります。" },
+            { q: "彼女がコンクールで優勝したという知らせを聞いて、自分のことのように嬉しかったのです。", a: "Hearing the news that she won the contest, I was as happy as if it were my own success.", advice: "won the は「ワン・ザ」ではなく「ワンダ」と音が繋がります。" },
             { q: "この小説は伏線がたくさん回収されるので、二回目を読むとさらに面白いです。", a: "This novel has a lot of foreshadowing, so it is even more interesting to read a second time.", advice: "foreshadowing（フォアシャドウイング）の 'sh' の音を意識。" },
             { q: "友達に勧められた新しい海外ドラマにハマってしまい、寝不足の日々が続いています。", a: "I am hooked on a new foreign drama recommended by my friend, and I am suffering from a lack of sleep.", advice: "hooked on は「フックト・オン」ではなく「フックトン」と繋がります。" },
             { q: "この料理には隠し味として少量のハチミツが使われているので、コクがあります。", a: "A small amount of honey is used as a secret ingredient in this dish, so it tastes rich.", advice: "amount of は「アマウント・オブ」ではなく「アマウントブ」に。" },
@@ -203,7 +206,7 @@
         let selectedQuiz = [];
         let currentIdx = 0;
         let isRecording = false;
-        let totalQuestions = 10; // 【追加】選択された問題数を保持する変数
+        let totalQuestions = 10;
 
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         let recognition = null;
@@ -234,14 +237,13 @@
         const recordStatus = document.getElementById('record-status');
         const liveTranscript = document.getElementById('live-transcript');
         const reportContainer = document.getElementById('report-container');
-        const selectCount = document.getElementById('select-count'); // 【追加】要素の取得
+        const selectCount = document.getElementById('select-count');
 
         btnStart.onclick = startPractice;
         btnRecord.onclick = toggleRecording;
         btnNext.onclick = nextQuestion;
         btnRestart.onclick = restartPractice;
 
-        // 【変更】指定された件数だけランダム抽出する汎用的な関数に変更
         function getRandomQuestions(count) {
             return [...questionPool].sort(() => 0.5 - Math.random()).slice(0, count);
         }
@@ -252,13 +254,12 @@
                 return;
             }
 
-            // 【追加】ユーザーが選択した問題数を取得
             totalQuestions = parseInt(selectCount.value, 10);
 
             navigator.mediaDevices.getUserMedia({ audio: true })
                 .then(stream => {
                     setupMediaRecorder(stream);
-                    selectedQuiz = getRandomQuestions(totalQuestions); // 【変更】選択された数だけ取得
+                    selectedQuiz = getRandomQuestions(totalQuestions);
                     currentIdx = 0;
                     userTranscripts = [];
                     userAudioBlobs = [];
@@ -291,7 +292,6 @@
         }
 
         function loadQuestion() {
-            // 【変更】総問題数の表示を変数（totalQuestions）に対応
             questionNumber.textContent = `第 ${currentIdx + 1} 問 / ${totalQuestions}`;
             questionText.textContent = selectedQuiz[currentIdx].q;
             progressBar.style.width = `${((currentIdx + 1) / totalQuestions) * 100}%`;
@@ -380,7 +380,6 @@
         }
 
         function nextQuestion() {
-            // 【変更】最後の問題判定の条件数を変数に対応
             if (currentIdx < totalQuestions - 1) {
                 currentIdx++;
                 loadQuestion();
@@ -392,7 +391,7 @@
         function calculateScore(model, user) {
             if (!user || user.includes("聞き取れませんでした")) return 0;
 
-            const cleanWords = (str) => str.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"").split(/\s+/).filter(Boolean);
+            const cleanWords = (str) => str.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?"']/g,"").split(/\s+/).filter(Boolean);
             const modelWords = cleanWords(model);
             const userWords = cleanWords(user);
 
@@ -434,8 +433,9 @@
                         <span style="background:${isGood ? '#dcfce7':'#fee2e2'}; color:${isGood ? '#166534':'#991b1b'}; padding:2px 8px; border-radius:4px; font-size:0.8rem;">一致度: ${score}%</span>
                     </div>
 
-                    <div class="txt-label">模範解答例</div>
-                    <div class="model-ans">${item.a}</div>
+                    <!-- タップできることを示すガイド文に変更 -->
+                    <div class="txt-label">模範解答例（タップで音読 🔊）</div>
+                    <div class="model-ans" onclick="speakText(this.dataset.ans)" data-ans="${item.a.replace(/"/g, '&quot;')}" style="cursor:pointer;" title="クリックでお手本音声を再生">${item.a} 🔊</div>
 
                     <div class="txt-label">AI文字起こし（あなたが喋った言葉）</div>
                     <div class="user-ans ${isGood ? 'good':''}">${userText}</div>
@@ -450,6 +450,21 @@
                 `;
                 reportContainer.appendChild(div);
             });
+        }
+
+        // 【追加】模範解答をネイティブ音声で読み上げる関数
+        function speakText(text) {
+            if ('speechSynthesis' in window) {
+                // すでに別の音声が流れていたら即座に停止して上書きする
+                window.speechSynthesis.cancel();
+               
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'en-US'; // 英語（米国）
+                utterance.rate = 0.95;    // ほんの少しだけゆっくり（聞き取りやすさ重視）
+                window.speechSynthesis.speak(utterance);
+            } else {
+                alert("お使いのブラウザは音声読み上げに対応していません。Google Chrome等でお試しください。");
+            }
         }
 
         function restartPractice() {

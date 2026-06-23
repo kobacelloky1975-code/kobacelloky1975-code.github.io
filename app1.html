@@ -32,8 +32,7 @@
         .user-ans.good { color: #16a34a; }
         .comment-box { background: #eff6ff; padding: 10px; border-radius: 6px; font-size: 0.85rem; color: #1e40af; border-left: 4px solid #3b82f6; margin-top: 8px; }
         .audio-player { margin-top: 8px; width: 100%; height: 32px; }
-       
-        /* 追加したセレクトボックスのスタイル */
+
         .select-wrapper { margin: 20px 0 25px 0; }
         .select-count { padding: 10px 20px; font-size: 1rem; border-radius: 8px; border: 2px solid #cbd5e1; font-weight: bold; color: #1e293b; outline: none; cursor: pointer; }
         .select-count:focus { border-color: #2563eb; }
@@ -46,8 +45,8 @@
     <main>
         <div id="start-screen" class="card">
             <h2>プロフェッショナル発話トレーニング</h2>
-            <p>厳選された<b>ビジネスでの発話文（30文字〜40文字）</b>が、100個のプールから毎回ランダムに出題されます。<br>マイクに向かって英語を話すと、自動で文字起こしされ、<b>語順や過不足を含めた精緻な構文一致度</b>を採点します。<br>結果画面では、<b>自分の録音を聞き返す</b>ことができます。</p>
-           
+            <p>厳選された<b>ビジネスでの発話文（30文字〜40文字）</b>が、100個のプールから毎回ランダムに出題されます。<br>マイクに向かって英語を話すと、自動で文字起こしされ、<b>単語の一致度</b>を採点します。<br>結果画面では、<b>自分の録音を聞き返す</b>ことができます。</p>
+
             <div class="select-wrapper">
                 <label for="select-count" style="font-weight: bold; margin-right: 10px;">出題数：</label>
                 <select id="select-count" class="select-count">
@@ -89,7 +88,7 @@
 
         <div id="result-screen" class="card" style="display: none;">
             <h2>🎉 トレーニング完了！</h2>
-            <p>今回の音声解析結果と、文字起こしされたデータです。構文の正確性と共にご自身の声を確認できます。</p>
+            <p>今回の音声解析結果と、文字起こしされたデータです。プレイヤーでご自身の声を確認できます。</p>
             <div id="report-container" class="report-list"></div>
             <button id="btn-restart" class="btn">もう一度挑戦する</button>
         </div>
@@ -145,7 +144,7 @@
             { q: "今期の利益配分に関する具体的な提案が、取締役会で承認されました。", a: "The specific proposal regarding this term's profit distribution was approved by the board.", advice: "approved by は「アプルーヴドゥ・バイ」ではなく「アプルーヴドゥバイ」に。" },
             { q: "業務効率化のアイデアがあれば、どなたでも提案箱に入れてください。", a: "If you have ideas for improving work efficiency, anyone can put them in the suggestion box.", advice: "efficiency（エフィシェンシー）の 'fi' を強調して発音します。" },
             { q: "クラウドサービスを活用することで、情報共有がスムーズになります。", a: "By utilizing cloud services, information sharing becomes smooth.", advice: "utilizing（ユータライジング）の最初の音をクリアに発声。" },
-            { q: "今回の市場調査の結果は、今後の製品開発に大きく貢献するでしょう。", a: "The results of this market research will greatly contribute to future product development.", advice: "contribute（コントリビューツ）のアクセントは 'tri' にあります。" },
+            { q: "今回の一連の市場調査結果は、今後の製品開発に大きく貢献するでしょう。", a: "The results of this market research will greatly contribute to future product development.", advice: "contribute（コントリビューツ）のアクセントは 'tri' にあります。" },
             { q: "担当者が有給休暇を取得しているため、代わりに私が対応いたします。", a: "Since the person in charge is taking paid leave, I will respond on their behalf.", advice: "on their behalf（オンゼアビハーフ）は「〜の代わりに」の定番フレーズ。" },
             { q: "新規顧客を開拓するために、オンラインセミナーを定期開催します。", a: "We will regularly hold online seminars to attract new customers.", advice: "regularly（レギュラリー）の 'l' と 'r' の連続をスムーズに。" },
             { q: "会議室の予約システムが変更になりましたので、ご注意ください。", a: "Please note that the conference room reservation system has changed.", advice: "reservation（レザヴェイション）の 'va' の部分を一番強く。" },
@@ -203,7 +202,7 @@
         let selectedQuiz = [];
         let currentIdx = 0;
         let isRecording = false;
-        let totalQuestions = 10; // 【変更】選択された問題数を保持する変数
+        let totalQuestions = 10;
 
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         let recognition = null;
@@ -234,14 +233,13 @@
         const recordStatus = document.getElementById('record-status');
         const liveTranscript = document.getElementById('live-transcript');
         const reportContainer = document.getElementById('report-container');
-        const selectCount = document.getElementById('select-count'); // 【追加】要素の取得
+        const selectCount = document.getElementById('select-count');
 
         btnStart.onclick = startPractice;
         btnRecord.onclick = toggleRecording;
         btnNext.onclick = nextQuestion;
         btnRestart.onclick = restartPractice;
 
-        // 【変更】10件固定だった関数を、指定数だけランダム抽出する汎用的な関数に変更
         function getRandomQuestions(count) {
             return [...questionPool].sort(() => 0.5 - Math.random()).slice(0, count);
         }
@@ -252,13 +250,12 @@
                 return;
             }
 
-            // 【追加】ユーザーが選択した問題数を数値として取得
             totalQuestions = parseInt(selectCount.value, 10);
 
             navigator.mediaDevices.getUserMedia({ audio: true })
                 .then(stream => {
                     setupMediaRecorder(stream);
-                    selectedQuiz = getRandomQuestions(totalQuestions); // 【変更】選択された数だけ取得
+                    selectedQuiz = getRandomQuestions(totalQuestions);
                     currentIdx = 0;
                     userTranscripts = [];
                     userAudioBlobs = [];
@@ -291,7 +288,6 @@
         }
 
         function loadQuestion() {
-            // 【変更】「10」と固定されていた部分を変数（totalQuestions）に変更
             questionNumber.textContent = `第 ${currentIdx + 1} 問 / ${totalQuestions}`;
             questionText.textContent = selectedQuiz[currentIdx].q;
             progressBar.style.width = `${((currentIdx + 1) / totalQuestions) * 100}%`;
@@ -380,7 +376,6 @@
         }
 
         function nextQuestion() {
-            // 【変更】終了条件の「9（10問未満）」を「totalQuestions - 1」に変更
             if (currentIdx < totalQuestions - 1) {
                 currentIdx++;
                 loadQuestion();
@@ -389,43 +384,24 @@
             }
         }
 
-        // 精緻化された採点ロジック（単語レベルのレーベンシュタイン距離）
+        // 【変更】以前のシンプルな単語一致アルゴリズムに戻した採点ロジック
         function calculateScore(model, user) {
             if (!user || user.includes("聞き取れませんでした")) return 0;
 
+            // 記号除去、小文字化、単語ごとの配列へ分解
             const cleanWords = (str) => str.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?"']/g,"").split(/\s+/).filter(Boolean);
             const modelWords = cleanWords(model);
             const userWords = cleanWords(user);
 
-            if (modelWords.length === 0) return 0;
-            if (userWords.length === 0) return 0;
-
-            const m = modelWords.length;
-            const n = userWords.length;
-           
-            const dp = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0));
-            for (let i = 0; i <= m; i++) dp[i][0] = i;
-            for (let j = 0; j <= n; j++) dp[0][j] = j;
-
-            for (let i = 1; i <= m; i++) {
-                for (let j = 1; j <= n; j++) {
-                    if (modelWords[i - 1] === userWords[j - 1]) {
-                        dp[i][j] = dp[i - 1][j - 1];
-                    } else {
-                        dp[i][j] = Math.min(
-                            dp[i - 1][j] + 1,    
-                            dp[i][j - 1] + 1,    
-                            dp[i - 1][j - 1] + 1
-                        );
-                    }
+            let matchCount = 0;
+            modelWords.forEach(w => {
+                if (userWords.includes(w)) {
+                    matchCount++;
                 }
-            }
+            });
 
-            const distance = dp[m][n];
-            const maxLength = Math.max(m, n);
-           
-            let score = Math.round(((maxLength - distance) / maxLength) * 100);
-            return Math.max(0, score);
+            let score = Math.round((matchCount / modelWords.length) * 100);
+            return Math.min(score, 100);
         }
 
         function showResults() {
@@ -436,7 +412,7 @@
             selectedQuiz.forEach((item, index) => {
                 const userText = userTranscripts[index] || "(聞き取れませんでした)";
                 const score = calculateScore(item.a, userText);
-                const isGood = score >= 70;
+                const isGood = score >= 60; // 【変更】判定基準を元の60%に戻しました
 
                 const audioBlob = userAudioBlobs[index];
                 let audioHtml = '';
@@ -452,7 +428,7 @@
                 div.innerHTML = `
                     <div class="report-top">
                         <span style="color:#2563eb;">Q${index + 1}. ${item.q}</span>
-                        <span style="background:${isGood ? '#dcfce7':'#fee2e2'}; color:${isGood ? '#166534':'#991b1b'}; padding:2px 8px; border-radius:4px; font-size:0.8rem;">構文一致度: ${score}%</span>
+                        <span style="background:${isGood ? '#dcfce7':'#fee2e2'}; color:${isGood ? '#166534':'#991b1b'}; padding:2px 8px; border-radius:4px; font-size:0.8rem;">一致度: ${score}%</span>
                     </div>
 
                     <div class="txt-label">模範解答例</div>
@@ -474,7 +450,6 @@
         }
 
         function restartPractice() {
-            // 【追加】「もう一度挑戦する」の際にも、現在のスタート画面のセレクトボックスの状態を維持して開始可能
             startPractice();
         }
     </script>

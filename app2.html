@@ -32,6 +32,11 @@
         .user-ans.good { color: #16a34a; }
         .comment-box { background: #eff6ff; padding: 10px; border-radius: 6px; font-size: 0.85rem; color: #1e40af; border-left: 4px solid #3b82f6; margin-top: 8px; }
         .audio-player { margin-top: 8px; width: 100%; height: 32px; }
+
+        /* 追加したセレクトボックスのスタイル */
+        .select-wrapper { margin: 20px 0 25px 0; }
+        .select-count { padding: 10px 20px; font-size: 1rem; border-radius: 8px; border: 2px solid #cbd5e1; font-weight: bold; color: #1e293b; outline: none; cursor: pointer; }
+        .select-count:focus { border-color: #1d4ed8; }
     </style>
 </head>
 <body>
@@ -41,7 +46,24 @@
     <main>
         <div id="start-screen" class="card">
             <h2>本気の英語発話トレーニング</h2>
-            <p>厳選された<b>自然な日本語（約30文字）</b>が、100個のプールから毎回ランダムに10問出題されます。<br>マイクに向かって英語を話すと、自動で文字起こしされ、一致度を採点します。<br>結果画面では、<b>自分の録音を聞き返す</b>ことができます。</p>
+            <p>厳選された<b>自然な日本語（約30文字）</b>が、100個のプールから毎回ランダムに出題されます。<br>マイクに向かって英語を話すと、自動で文字起こしされ、一致度を採点します。<br>結果画面では、<b>自分の録音を聞き返す</b>ことができます。</p>
+
+            <div class="select-wrapper">
+                <label for="select-count" style="font-weight: bold; margin-right: 10px;">出題数：</label>
+                <select id="select-count" class="select-count">
+                    <option value="1">1 問</option>
+                    <option value="2">2 問</option>
+                    <option value="3">3 問</option>
+                    <option value="4">4 問</option>
+                    <option value="5">5 問</option>
+                    <option value="6">6 問</option>
+                    <option value="7">7 問</option>
+                    <option value="8">8 問</option>
+                    <option value="9">9 問</option>
+                    <option value="10" selected>10 問</option>
+                </select>
+            </div>
+
             <button id="btn-start" class="btn">トレーニングを始める</button>
         </div>
 
@@ -53,13 +75,13 @@
             </div>
             <div style="font-size: 0.8rem; color: #1d4ed8; font-weight: bold; text-align: left;">お題の日本語</div>
             <div id="question-text" class="q-text">読み込み中...</div>
-           
+
             <div style="margin: 25px 0;">
                 <button id="btn-record" class="btn-record">🎤</button>
                 <p id="record-status" style="font-size: 0.9rem; color: #64748b; margin-top: 10px;">ボタンを押して、英語で喋ってください</p>
                 <div id="live-transcript" style="font-size: 1.1rem; font-weight: bold; color: #1d4ed8; margin-top: 10px; min-height: 24px;"></div>
             </div>
-           
+
             <div class="clearfix">
                 <button id="btn-next" class="btn-next" disabled>次へ進む →</button>
             </div>
@@ -132,7 +154,7 @@
             { q: "彼がおすすめしてくれた小説が面白すぎて、一晩で一気に読んでしまいました。", a: "The novel he recommended to me was so interesting that I read it all in one night.", advice: "read it all は「リード・イット・オール」ではなく「リーディトール」に。" },
             { q: "来週のプレゼンテーションの準備のために、今日の午後は資料を集めます。", a: "I will collect materials this afternoon to prepare for next week's presentation.", advice: "prepare for（プリペアフォー）の 'r' の連続に気をつけて。" },
             { q: "海外旅行に行く前には、現地の文化やマナーについて調べるようにしています。", a: "Before traveling abroad, I try to research the local culture and manners.", advice: "traveling abroad は「トラヴェリング・アブロード」と滑らかに。" },
-            { q: "このズボンは少しサイズが大きいので、ベルトをしないと落ちてしまいます。", a: "These pants are a bit big for me, so they will fall down if I do not wear a belt.", advice: "a bit big は「ア・ビット・ビッグ」の 't' を飲み込むように。" },
+            { q: "このズボンは少しサイズが大きいので、ベルトをしないと落ちてしまいます。", a: "These pants are a bit big for me, so they will fall down if I do not wear a belt.", advice: "a bit big は [ア・ビット・ビッグ] の 't' を飲み込むように。" },
             { q: "彼女はフランス語がペラペラで、いつか彼女のように話せるようなりたいです。", a: "She speaks fluent French, and I want to be able to speak like her someday.", advice: "fluent（フルーエント）の最初の音をハキハキと発音して。" },
             { q: "この街は自然が豊かで静かなので、子育てをするには最高の場所です。", a: "This town is rich in nature and quiet, so it is the best place to raise children.", advice: "rich in は「リッチ・イン」ではなく「リッチィン」と繋がります。" },
             { q: "友達へのメールの返信をすっかり忘れていたことに、今気がつきました。", a: "I just realized that I completely forgot to reply to my friend's email.", advice: "just realized は「ジャスト・リアライズドゥ」の 't' が消えます。" },
@@ -148,7 +170,7 @@
             { q: "このスマートウォッチは、歩数だけでなく睡眠の質も記録してくれます。", a: "This smartwatch records not only your steps but also your sleep quality.", advice: "quality（クオリティ）の 'l' の弾きを意識して。" },
             { q: "明日までにやらなければならない仕事が山積みで、今夜は残業になりそうです。", a: "I have a mountain of work to do by tomorrow, so I think I will work overtime tonight.", advice: "mountain of は「マウンテン・オブ」ではなく「マウンテノブ」に。" },
             { q: "外国の友達が日本に来るので、京都の有名なお寺を案内する予定です。", a: "My foreign friend is coming to Japan, so I plan to show them around famous temples in Kyoto.", advice: "show them around は「ショウゼマラウンド」と繋がります。" },
-            { q: "コーヒーに砂糖とミルクを入れますか、それともブラックのままが良いですか？", a: "Would you like sugar and milk in your coffee, or do you prefer it black?", advice: "sugar and milk は「シュガーアンミルク」と軽快に。" },
+            { q: "コーヒーに砂糖 hurdles とミルクを入れますか、それともブラックのままが良いですか？", a: "Would you like sugar and milk in your coffee, or do you prefer it black?", advice: "sugar and milk は「シュガーアンミルク」と軽快に。" },
             { q: "この靴は見た目はかっこいいのですが、長時間歩くと足が痛くなります。", a: "These shoes look cool, but my feet hurt when I walk for a long time.", advice: "look cool の 'k' と 'c' の重なりをすっきりと。" },
             { q: "彼が嘘をついているとはどうしても思えないほど、彼の目は真剣でした。", a: "His eyes were so serious that I could not believe he was telling a lie.", advice: "telling a lie は「テリング・ア・ライ」ではなく「テリンガライ」に。" },
             { q: "昨日から風邪気味で喉がとても痛いので、今日は温かい生姜湯を飲みます。", a: "I have a slight cold and a sore throat since yesterday, so I will drink hot ginger tea today.", advice: "sore throat（ソアスロート）の 'thr' の発音に注意して。" },
@@ -157,7 +179,7 @@
             { q: "子供たちが静かに本を読んでいると思ったら、いつの間にか寝ていました。", a: "I thought the children were reading books quietly, but they fell asleep before I knew it.", advice: "fell asleep は「フェル・アスリープ」ではなく「フェラスリープ」に。" },
             { q: "このアプリを使えば、毎日の支出を自動でグラフにしてくれるので便利です。", a: "If you use this app, it automatically graphs your daily expenses, so it is convenient.", advice: "daily expenses（デイリー・エクスぺンシズ）をハキハキと。" },
             { q: "急な予定変更でご迷惑をおかけしてしまい、大変申し訳ございませんでした。", a: "I am very sorry for causing you trouble due to the sudden schedule change.", advice: "causing you は「コージング・ユー」より「コージンジュー」に近く。" },
-            { q: "彼は自分の間違いを素直に認めて謝罪したので、みんな彼を許しました。", a: "He honestly admitted his mistake and apologized, so everyone forgave him.", advice: "admitted his は 'h' が落ちて「アドミッティディズ」のように。" },
+            { q: "彼は自分の間違いを素直に認めて謝罪したので、みんな彼を許しました。", a: "He honestly admitted his mistake and apologized, so everyone forgave him.", advice: "admitted his は 'h' が弱まり「アドミッティディズ」のように。" },
             { q: "この電子レンジは使い方が複雑すぎて、説明書を読んでもよく分かりません。", a: "The way to use this microwave is too complex to understand even if I read the manual.", advice: "too complex to は「トゥー・コンプレックス・トゥ」とリズム良く。" },
             { q: "彼女が新しい会社を立ち上げたと聞いたので、お祝いのメッセージを送りました。", a: "I heard that she started a new company, so I sent her a congratulatory message.", advice: "congratulatory（コングラチュラトリー）の発音を慎重に。" },
             { q: "このデザインのシャツは、どんな服にも合わせやすいので重宝しています。", a: "This designed shirt is useful because it is easy to match with any clothes.", advice: "match with は「マッチ・ウィズ」の語尾をすっきりと。" },
@@ -181,10 +203,11 @@
         let selectedQuiz = [];
         let currentIdx = 0;
         let isRecording = false;
-       
+        let totalQuestions = 10; // 【追加】選択された問題数を保持する変数
+
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         let recognition = null;
-       
+
         if (SpeechRecognition) {
             recognition = new SpeechRecognition();
             recognition.lang = 'en-US';
@@ -192,10 +215,9 @@
             recognition.interimResults = true;
         }
 
-        // 録音用（MediaRecorder）の変数
         let mediaRecorder = null;
         let audioChunks = [];
-        let userAudioBlobs = []; // 10問分の録音データを保存する配列
+        let userAudioBlobs = [];
         let userTranscripts = [];
 
         const startScreen = document.getElementById('start-screen');
@@ -212,14 +234,16 @@
         const recordStatus = document.getElementById('record-status');
         const liveTranscript = document.getElementById('live-transcript');
         const reportContainer = document.getElementById('report-container');
+        const selectCount = document.getElementById('select-count'); // 【追加】要素の取得
 
         btnStart.onclick = startPractice;
         btnRecord.onclick = toggleRecording;
         btnNext.onclick = nextQuestion;
         btnRestart.onclick = restartPractice;
 
-        function getTenRandomQuestions() {
-            return [...questionPool].sort(() => 0.5 - Math.random()).slice(0, 10);
+        // 【変更】指定された件数だけランダム抽出する汎用的な関数に変更
+        function getRandomQuestions(count) {
+            return [...questionPool].sort(() => 0.5 - Math.random()).slice(0, count);
         }
 
         function startPractice() {
@@ -227,15 +251,18 @@
                 alert("お使いのブラウザや環境は音声認識に対応していません。Google Chromeでお試しください。");
                 return;
             }
-            // マイク権限とMediaRecorderの初期化を試みる
+
+            // 【追加】ユーザーが選択した問題数を取得
+            totalQuestions = parseInt(selectCount.value, 10);
+
             navigator.mediaDevices.getUserMedia({ audio: true })
                 .then(stream => {
                     setupMediaRecorder(stream);
-                    selectedQuiz = getTenRandomQuestions();
+                    selectedQuiz = getRandomQuestions(totalQuestions); // 【変更】選択された数だけ取得
                     currentIdx = 0;
                     userTranscripts = [];
-                    userAudioBlobs = []; // 初期化
-                   
+                    userAudioBlobs = [];
+
                     startScreen.style.display = 'none';
                     resultScreen.style.display = 'none';
                     practiceScreen.style.display = 'block';
@@ -249,7 +276,7 @@
 
         function setupMediaRecorder(stream) {
             mediaRecorder = new MediaRecorder(stream);
-           
+
             mediaRecorder.ondataavailable = (event) => {
                 if (event.data.size > 0) {
                     audioChunks.push(event.data);
@@ -257,18 +284,18 @@
             };
 
             mediaRecorder.onstop = () => {
-                // 録音データをBlobオブジェクトにして配列に保存
                 const audioBlob = new Blob(audioChunks, { type: 'audio/mp3' });
                 userAudioBlobs[currentIdx] = audioBlob;
-                audioChunks = []; // 次回用にクリア
+                audioChunks = [];
             };
         }
 
         function loadQuestion() {
-            questionNumber.textContent = `第 ${currentIdx + 1} 問 / 10`;
+            // 【変更】総問題数の表示を変数（totalQuestions）に対応
+            questionNumber.textContent = `第 ${currentIdx + 1} 問 / ${totalQuestions}`;
             questionText.textContent = selectedQuiz[currentIdx].q;
-            progressBar.style.width = `${((currentIdx + 1) / 10) * 100}%`;
-           
+            progressBar.style.width = `${((currentIdx + 1) / totalQuestions) * 100}%`;
+
             btnNext.disabled = true;
             btnNext.className = "btn-next";
             recordStatus.textContent = "ボタンを押して、マイクに向かって英語で喋ってください";
@@ -282,10 +309,9 @@
                 try {
                     liveTranscript.textContent = "（聞き取り中...）";
                     userTranscripts[currentIdx] = "";
-                    userAudioBlobs[currentIdx] = null; // 古い録音データをクリア
+                    userAudioBlobs[currentIdx] = null;
                     audioChunks = [];
-                   
-                    // 音声認識と実際の録音を同時にスタート
+
                     recognition.start();
                     if (mediaRecorder && mediaRecorder.state === "inactive") {
                         mediaRecorder.start();
@@ -320,7 +346,7 @@
                         interimTranscript += event.results[i][0].transcript;
                     }
                 }
-               
+
                 const fullText = (finalTranscript + interimTranscript).trim();
                 liveTranscript.textContent = fullText;
                 userTranscripts[currentIdx] = fullText;
@@ -330,8 +356,7 @@
                 isRecording = false;
                 btnRecord.className = "btn-record";
                 timerStatus.style.display = 'none';
-               
-                // もしボタン押し忘れなどでMediaRecorderが動きっぱなしなら止める
+
                 if (mediaRecorder && mediaRecorder.state === "recording") {
                     mediaRecorder.stop();
                 }
@@ -342,7 +367,7 @@
                 } else {
                     recordStatus.textContent = "聞き取り完了！下部にあなたの英語が表示されています。";
                 }
-               
+
                 btnNext.disabled = false;
                 btnNext.className = "btn-next active";
             };
@@ -355,7 +380,8 @@
         }
 
         function nextQuestion() {
-            if (currentIdx < 9) {
+            // 【変更】最後の問題判定の条件数を変数に対応
+            if (currentIdx < totalQuestions - 1) {
                 currentIdx++;
                 loadQuestion();
             } else {
@@ -365,18 +391,18 @@
 
         function calculateScore(model, user) {
             if (!user || user.includes("聞き取れませんでした")) return 0;
-           
+
             const cleanWords = (str) => str.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"").split(/\s+/).filter(Boolean);
             const modelWords = cleanWords(model);
             const userWords = cleanWords(user);
-           
+
             let matchCount = 0;
             modelWords.forEach(w => {
                 if (userWords.includes(w)) {
                     matchCount++;
                 }
             });
-           
+
             let score = Math.round((matchCount / modelWords.length) * 100);
             return Math.min(score, 100);
         }
@@ -391,7 +417,6 @@
                 const score = calculateScore(item.a, userText);
                 const isGood = score >= 60;
 
-                // 録音データ（Blob）から再生用URLを生成
                 const audioBlob = userAudioBlobs[index];
                 let audioHtml = '';
                 if (audioBlob && userText !== "(聞き取れませんでした)") {
@@ -408,16 +433,16 @@
                         <span style="color:#1d4ed8;">Q${index + 1}. ${item.q}</span>
                         <span style="background:${isGood ? '#dcfce7':'#fee2e2'}; color:${isGood ? '#166534':'#991b1b'}; padding:2px 8px; border-radius:4px; font-size:0.8rem;">一致度: ${score}%</span>
                     </div>
-                   
+
                     <div class="txt-label">模範解答例</div>
                     <div class="model-ans">${item.a}</div>
-                   
+
                     <div class="txt-label">AI文字起こし（あなたが喋った言葉）</div>
                     <div class="user-ans ${isGood ? 'good':''}">${userText}</div>
-                   
+
                     <div class="txt-label">あなたの録音（聞き返し）</div>
                     ${audioHtml}
-                   
+
                     <div class="comment-box">
                         <div style="font-weight:bold; color:#1e40af; font-size:0.8rem;">💡 この問題の発音アドバイス</div>
                         <div style="margin-top:3px;">${item.advice}</div>

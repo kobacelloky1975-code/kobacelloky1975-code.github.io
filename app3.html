@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>オンラインミーティング英会話スピーキング・厳選100問</title>
+    <style>
+        body { font-family: sans-serif; background-color: #f8fafc; color: #1e293b; margin: 0; padding: 0; display: flex; flex-direction: column; min-height: 100vh; }
+        header { background-color: #0f172a; color: white; padding: 15px; text-align: center; font-size: 1.2rem; font-weight: bold; }
+        main { flex-grow: 1; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .card { background: white; padding: 30px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); width: 100%; max-width: 550px; text-align: center; box-sizing: border-box; }
+        h2 { margin-top: 0; color: #0f172a; }
+        p { color: #475569; font-size: 0.95rem; line-height: 1.6; }
+        .btn { background-color: #2563eb; color: white; border: none; padding: 12px 35px; font-size: 1rem; border-radius: 25px; cursor: pointer; font-weight: bold; }
+        .btn:hover { background-color: #1d4ed8; }
+        .progress-bg { width: 100%; background: #e2e8f0; height: 8px; border-radius: 4px; margin-bottom: 15px; overflow: hidden; }
+        .progress-bar { background: #2563eb; height: 100%; width: 0%; transition: width 0.3s; }
+        .flex-space { display: flex; justify-content: space-between; font-size: 0.85rem; color: #64748b; margin-bottom: 20px; font-weight: bold; }
+        .q-text { font-size: 1.35rem; font-weight: bold; margin: 20px 0; color: #0f172a; min-height: 70px; display: flex; align-items: center; justify-content: center; line-height: 1.5; }
+        .btn-record { background-color: #ef4444; color: white; border: none; width: 80px; height: 80px; border-radius: 50%; cursor: pointer; font-size: 2rem; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(239,68,68,0.2); }
+        .recording { animation: pulse 1.2s infinite; background-color: #dc2626; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.06); } 100% { transform: scale(1); } }
+        .btn-next { background-color: #e2e8f0; color: #94a3b8; border: none; padding: 10px 25px; border-radius: 6px; cursor: not-allowed; float: right; font-weight: bold; }
+        .btn-next.active { background-color: #2563eb; color: white; cursor: pointer; }
+        .clearfix::after { content: ""; clear: both; display: table; }
+        .report-list { max-height: 400px; overflow-y: auto; text-align: left; margin-bottom: 25px; }
+        .report-item { border: 1px solid #e2e8f0; background: #f8fafc; padding: 15px; border-radius: 12px; margin-bottom: 15px; }
+        .report-top { display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 5px; font-weight: bold; }
+        .txt-label { font-size: 0.75rem; color: #64748b; margin-top: 8px; font-weight: bold; }
+        .model-ans { font-size: 1.05rem; font-style: italic; color: #1e3a8a; margin: 2px 0; font-weight: bold; }
+        .user-ans { font-size: 1.05rem; color: #dc2626; margin: 2px 0; font-weight: bold; }
+        .user-ans.good { color: #16a34a; }
+        .comment-box { background: #eff6ff; padding: 10px; border-radius: 6px; font-size: 0.85rem; color: #1e40af; border-left: 4px solid #3b82f6; margin-top: 8px; }
+        .audio-player { margin-top: 8px; width: 100%; height: 32px; }
+
+        .select-wrapper { margin: 20px 0 25px 0; }
+        .select-count { padding: 10px 20px; font-size: 1rem; border-radius: 8px; border: 2px solid #cbd5e1; font-weight: bold; color: #1e293b; outline: none; cursor: pointer; }
+        .select-count:focus { border-color: #2563eb; }
+    </style>
+</head>
+<body>
+
+    <header>🌐 オンラインミーティング英会話スピーキング・厳選100問</header>
+
+    <main>
+        <div id="start-screen" class="card">
+            <h2>リモートワーク発話トレーニング</h2>
+            <p>WEB会議で頻出する<b>オンラインミーティングの必須フレーズ</b>が、100個のプールから毎回ランダムに出題されます。<br>マイクに向かって英語を話すと、自動で文字起こしされ、<b>単語の一致度</b>を採点します。<br>結果画面では、<b>自分の録音を聞き返す</b>ことができます。</p>
+
+            <div class="select-wrapper">
+                <label for="select-count" style="font-weight: bold; margin-right: 10px;">出題数：</label>
+                <select id="select-count" class="select-count">
+                    <option value="1">1 問</option>
+                    <option value="2">2 問</option>
+                    <option value="3">3 問</option>
+                    <option value="4">4 問</option>
+                    <option value="5">5 問</option>
+                    <option value="6">6 問</option>
+                    <option value="7">7 問</option>
+                    <option value="8">8 問</option>
+                    <option value="9">9 問</option>
+                    <option value="10" selected>10 問</option>
+                </select>
+            </div>
+
+            <button id="btn-start" class="btn">トレーニングを始める</button>
+        </div>
+
+        <div id="practice-screen" class="card" style="display: none;">
+            <div class="progress-bg"><div id="progress-bar" class="progress-bar"></div></div>
+            <div class="flex-space">
+                <span id="question-number">第 1 問 / 10</span>
+                <span id="timer" style="color: #ef4444; display: none; font-weight: bold;">● 録音・解析中...</span>
+            </div>
+            <div style="font-size: 0.8rem; color: #2563eb; font-weight: bold; text-align: left;">お題の日本語</div>
+            <div id="question-text" class="q-text">読み込み中...</div>
+
+            <div style="margin: 25px 0;">
+                <button id="btn-record" class="btn-record">🎤</button>
+                <p id="record-status" style="font-size: 0.9rem; color: #64748b; margin-top: 10px;">ボタンを押して、英語で喋ってください</p>
+                <div id="live-transcript" style="font-size: 1.1rem; font-weight: bold; color: #2563eb; margin-top: 10px; min-height: 24px;"></div>
+            </div>
+
+            <div class="clearfix">
+                <button id="btn-next" class="btn-next" disabled>次へ進む →</button>
+            </div>
+        </div>
+
+        <div id="result-screen" class="card" style="display: none;">
+            <h2>🎉 トレーニング完了！</h2>
+            <p>今回の音声解析結果と、文字起こしされたデータです。プレイヤーでご自身の声を確認できます。</p>
+            <div id="report-container" class="report-list"></div>
+            <button id="btn-restart" class="btn">もう一度挑戦する</button>
+        </div>
+    </main>
+
+    <script>
+        // オンラインミーティング例文100問のプール
+        const questionPool = [
+            { q: "私の声がはっきりと聞こえますか。", a: "Can you hear me clearly?", advice: "hear me は「ヒアミー」と繋げて発音しましょう。" },
+            { q: "画面がフリーズしてしまっているようです。", a: "It seems like your screen is frozen.", advice: "seems like は「シームズライク」と滑らかに繋げます。" },
+            { q: "もう一度おっしゃっていただけますか。", a: "Could you please say that again?", advice: "say that の 't' は飲み込むように発音すると自然です。" },
+            { q: "マイクがミュートになっているようです。", a: "I think you are on mute.", advice: "on mute は「オンミュート」とはっきり発音します。" },
+            { q: "私の画面を皆さんと共有しますね。", a: "Let me share my screen with you.", advice: "share my の 'r' から 'm' への移行をスムーズに。" },
+            { q: "皆さん、私の画面が見えていますか。", a: "Can everyone see my screen now?", advice: "everyone（エヴリワン）の 'v' は下唇を軽く噛みます。" },
+            { q: "少し音声が途切れているようです。", a: "Your audio is breaking up a little.", advice: "breaking up はリンキングして「ブレイキングアップ」となります。" },
+            { q: "リンクをチャットボックスに送ります。", a: "I will send the link in the chat box.", advice: "send the の 'd' は軽く、'the' へ滑らかに繋げます。" },
+            { q: "本日のミーティングを始めましょう。", a: "Let's start today's meeting.", advice: "Let's start は「レッツスタート」と一息で発音します。" },
+            { q: "今日の議題は新規プロジェクトについてです。", a: "Today's agenda is about the new project.", advice: "agenda（アジェンダ）は 'gen' にアクセントがあります。" },
+            { q: "次の議題に移りたいと思います。", a: "I would like to move on to the next topic.", advice: "move on はリンキングして「ムーヴォン」と発音します。" },
+            { q: "これについて何かご質問はありますか。", a: "Do you have any questions about this?", advice: "questions（クエスチョンズ）の 's' をクリアに。" },
+            { q: "今のところすべて順調で、問題ありません。", a: "Everything is clear and fine so far.", advice: "so far は「ソーファー」と 'f' を意識して発音します。" },
+            { q: "チャットに入力していただけますか。", a: "Could you please type it in the chat?", advice: "type it はリンキングして「タイピット」となります。" },
+            { q: "少し背景の雑音が聞こえるようです。", a: "I can hear some background noise.", advice: "background（バックグラウンド）の 'g' を明瞭に。" },
+            { q: "少しの間、マイクをミュートにします。", a: "I will mute my microphone for a moment.", advice: "microphone（マイクォフォン）の 'ph' は 'f' の音です。" },
+            { q: "電波の接続状況が良くないようです。", a: "My internet connection seems unstable.", advice: "unstable（アンスティブル）の 'sta' にアクセントがあります。" },
+            { q: "一度退出して、入り直してみます。", a: "I will leave and try to rejoin the meeting.", advice: "try to は素早く「トレィトゥ」のように発音します。" },
+            { q: "どなたか発言されているようですが。", a: "I think someone is trying to speak.", advice: "someone is は「サムワニズ」と繋がって聞こえます。" },
+            { q: "先にどうぞ、お話しください。", a: "Please go ahead and speak first.", advice: "go ahead はリンキングして「ゴーアヘッド」となります。" },
+            { q: "発言を遮ってしまい申し訳ありません。", a: "I am sorry for interrupting you.", advice: "interrupting（インタラプティング）は 'rup' を強く。" },
+            { q: "今の点について、もう少し詳しく教えてください。", a: "Could you elaborate more on that point?", advice: "elaborate（イラボレイト）の 'la' にアクセントがあります。" },
+            { q: "画面に表示されている資料をご覧ください。", a: "Please look at the document on the screen.", advice: "look at はリンキングして「ルカット」になります。" },
+            { q: "このミーティングは録画されていますか。", a: "Is this meeting being recorded?", advice: "recorded（リコーディドゥ）の 'cor' を強調します。" },
+            { q: "予定通りに終了したいと思います。", a: "I would like to wrap up on time.", advice: "wrap up はリンキングして「ラップアップ」と発音します。" },
+            { q: "議事録はミーティングの後に共有します。", a: "I will share the minutes after the meeting.", advice: "minutes（ミニッツ）は「議事録」という意味の重要単語です。" },
+            { q: "佐藤さんが参加するまで数分待ちましょう。", a: "Let's wait a few minutes for Mr. Sato.", advice: "wait a は繋がって「ウェイタ」のように発音します。" },
+            { q: "全員揃ったようですので、始めましょう。", a: "It seems everyone is here, so let's start.", advice: "It seems は「イッツィームズ」と滑らかに。" },
+            { q: "本日はお時間をいただきありがとうございます。", a: "Thank you for your time today.", advice: "Thank you は「センキュー」と歯の間から息を出して。" },
+            { q: "私のカメラをオンにしてもいいですか。", a: "Is it okay if I turn on my camera?", advice: "turn on はリンキングして「ターノン」と発音します。" },
+            { q: "カメラの調子が悪いようです。", a: "There seems to be a problem with my camera.", advice: "problem（プロブレム）の最初の 'p' をクリアに。" },
+            { q: "今のスライドをもう一度見せてください。", a: "Could you show me the previous slide again?", advice: "previous（プリーヴィアス）は最初の 'p' を強く。" },
+            { q: "次のスライドに進めていただけますか。", a: "Could you please move to the next slide?", advice: "move to は「ムーヴトゥ」と滑らかに移行します。" },
+            { q: "画面を全画面表示にしていただけますか。", a: "Could you make the screen full screen?", advice: "full screen の 'f' と 's' の摩擦音を意識して。" },
+            { q: "資料の文字が小さくて読めません。", a: "The text on the document is too small to read.", advice: "too small は「トゥースモール」と繋げます。" },
+            { q: "画面を少し拡大していただけますか。", a: "Could you zoom in on the screen a little?", advice: "zoom in はリンキングして「ズーミン」となります。" },
+            { q: "チャットボックスのファイルを開いてください。", a: "Please open the file in the chat box.", advice: "open the は「オープンザ」と滑らかに。" },
+            { q: "この件について、ご意見はありますか。", a: "Do you have any input on this matter?", advice: "input（インプット）は「意見・貢献」という意味でよく使います。" },
+            { q: "そのご意見に賛同いたします。", a: "I completely agree with that opinion.", advice: "completely（コンプリートリー）は 'plete' を強く。" },
+            { q: "その点について確認させてください。", a: "Let me double-check on that point.", advice: "double-check（ダブルチェック）は日常・ビジネス共に多用します。" },
+            { q: "私の理解が正しいか確認させてください。", a: "Let me make sure if my understanding is correct.", advice: "make sure（メイクシュア）は一息で発音します。" },
+            { q: "それはどういう意味か説明してください。", a: "Could you explain what you mean by that?", advice: "mean by は「ミーンバイ」とスムーズに繋げます。" },
+            { q: "質問の意図がよく分かりませんでした。", a: "I didn't quite catch the meaning of your question.", advice: "didn't quite は「ディドゥントクアイト」と発音します。" },
+            { q: "申し訳ありませんが、よく聞こえませんでした。", a: "I am sorry, but I couldn't hear you well.", advice: "couldn't hear は「クドゥントヒア」と弱めに繋げます。" },
+            { q: "少しゆっくり話していただけますか。", a: "Could you please speak a little slower?", advice: "speak a はリンキングして「スピーカ」になります。" },
+            { q: "私の英語は伝わっていますでしょうか。", a: "Does my English make sense to you?", advice: "make sense は「メイクセンス」と一つの単語のように。" },
+            { q: "話の途中で申し訳ありません。", a: "I am sorry to cut in, but may I say something?", advice: "cut in はリンキングして「カットイン」となります。" },
+            { q: "少し急用ができたので、一時退席します。", a: "I need to step away for a moment for an urgent matter.", advice: "step away はリンキングして「ステップアウェイ」に。" },
+            { q: "ただいま戻りました。失礼いたしました。", a: "I am back now. Sorry for the interruption.", advice: "interruption（インタラプション）の 'rup' を強調。" },
+            { q: "私の代わりに説明をお願いできますか。", a: "Could you cover for me and explain this?", advice: "cover for me は「カバーフォーミー」と滑らかに。" },
+            { q: "今日の主な決定事項を確認しましょう。", a: "Let's review the main decisions made today.", advice: "review（リヴュー）は 'view' にアクセントがあります。" },
+            { q: "次のステップについて話し合いましょう。", a: "Let's discuss the next steps for this project.", advice: "discuss（ディスカス）は後半を強く発音します。" },
+            { q: "誰がどのタスクを担当するか決めましょう。", a: "Let's decide who will be in charge of each task.", advice: "in charge of は「インチァージォヴ」と繋がります。" },
+            { q: "締め切りは来週の金曜日です。", a: "The deadline for this task is next Friday.", advice: "deadline（デッドライン）の 'd' は軽く発音します。" },
+            { q: "次回のミーティングの日程を決めましょう。", a: "Let's schedule the next meeting before we finish.", advice: "schedule（スケジュール）の 'sch' を明瞭に。" },
+            { q: "メールで候補日をお送りします。", a: "I will send you the proposed dates by email.", advice: "proposed（プロポーズドゥ）の 'po' を強く発音します。" },
+            { q: "本日はご参加いただきありがとうございました。", a: "Thank you all for joining the meeting today.", advice: "Thank you all は「センキューオール」と繋げます。" },
+            { q: "それでは、ミーティングを退出します。", a: "I will leave the meeting room now. Goodbye.", advice: "leave the は「リーヴザ」と流れるように。" },
+            { q: "今日のミーティングを終了します。", a: "I am going to end the meeting now.", advice: "end the はリンキングして「エンザ」のようになります。" },
+            { q: "良い一日をお過ごしください。", a: "Have a great day ahead, everyone.", advice: "Have a はリンキングして「ハヴァ」と発音します。" },
+            { q: "音声にエコーがかかっているようです。", a: "It seems there is an echo in your audio.", advice: "echo（エコー）の最初の 'e' を強く発音します。" },
+            { q: "イヤホンを接続し直してみてください。", a: "Please try reconnecting your earphones.", advice: "reconnecting（リコネクティング）は 'nec' を強調。" },
+            { q: "これで私の声は改善されましたか。", a: "Is my audio better now?", advice: "better now の 't' はフラップして「ベラーナウ」に近くなります。" },
+            { q: "画面共有の許可をいただけますか。", a: "Could you please give me permission to share my screen?", advice: "permission（パーミッション）の 'mis' を強く発音します。" },
+            { q: "ホストの権限を私に渡していただけますか。", a: "Could you pass the host rights to me?", advice: "pass the は「パスザ」と滑らかに繋げます。" },
+            { q: "画面共有を一度停止しますね。", a: "I will stop sharing my screen for a second.", advice: "for a second は「フォーァセカンドゥ」と一気に。" },
+            { q: "チャットボックスのリンクをクリックしてください。", a: "Please click on the link in the chat box.", advice: "click on はリンキングして「クリッコン」となります。" },
+            { q: "ファイルをダウンロードしていただけますか。", a: "Could you please download the attached file?", advice: "download（ダウンロード）の 'down' を強く。" },
+            { q: "ファイルをこちらからお送りします。", a: "I will send the file over right now.", advice: "send the は「センザ」のように聞こえることも。" },
+            { q: "このミーティングは録画されています。", a: "This meeting is being recorded for review.", advice: "being（ビーイング）をはっきりと発音します。" },
+            { q: "録画データを後で送っていただけますか。", a: "Could you send me the recording later?", advice: "recording（リコーディング）の 'cor' にアクセント。" },
+            { q: "録画を開始してもよろしいでしょうか。", a: "Is it alright if I start recording this session?", advice: "Is it alright は「イズィットオールライト」と繋げます。" },
+            { q: "このセッションはメモを取る必要がありますか。", a: "Do we need to take notes during this session?", advice: "take notes は「テイクノーツ」と滑らかに。" },
+            { q: "私が今日の議事録を担当します。", a: "I will take the minutes for today's meeting.", advice: "take the は「テイクザ」と流れるように。" },
+            { q: "私の代わりにメモを取っていただけますか。", a: "Could you please take notes on my behalf?", advice: "on my behalf（オンマイビハーフ）はビジネスの重要表現。" },
+            { q: "少し時間が押しているので、急ぎましょう。", a: "We are running out of time, so let's hurry.", advice: "running out of は「ラニングアウトォヴ」と繋がります。" },
+            { q: "予定より早く進んでいるので、余裕があります。", a: "We are ahead of schedule, so we have time.", advice: "ahead of はリンキングして「アヘッドォヴ」となります。" },
+            { q: "この議題には5分時間を使いましょう。", a: "Let's spend five minutes on this topic.", advice: "spend five の 'd' と 'f' をスムーズに移行。" },
+            { q: "時間が来ましたので、次の議題に進みます。", a: "Time is up, so let's move to the next item.", advice: "Time is up はリンキングして「タイムイズアップ」に。" },
+            { q: "各自の進捗状況を教えてください。", a: "Please update us on your progress.", advice: "update us はリンキングして「アップデートアス」となります。" },
+            { q: "私のプロジェクトは順調に進んでいます。", a: "My project is moving forward smoothly.", advice: "moving forward の 'g' と 'f' を滑らかに。" },
+            { q: "いくつかの課題に直面しています。", a: "We are facing a few challenges right now.", advice: "facing a はリンキングして「フェイシングァ」に。" },
+            { q: "この問題について、上司に相談します。", a: "I will consult with my manager about this issue.", advice: "consult with の 't' は軽く、'with' へ繋げます。" },
+            { q: "他のメンバーの意見も聞いてみましょう。", a: "Let's hear from other team members as well.", advice: "hear from は「ヒアフロム」とスムーズに発音します。" },
+            { q: "鈴木さんの意見についてどう思いますか。", a: "What do you think about Ms. Suzuki's opinion?", advice: "think about はリンキングして「シンカバウト」になります。" },
+            { q: "それは非常に良いアイデアだと思います。", a: "I think that is an excellent idea.", advice: "excellent（エクセレント）は最初の 'ex' を強く。" },
+            { q: "少し異なる視点からお話しさせてください。", a: "Let me share a slightly different perspective.", advice: "perspective（パースペクティヴ）の 'spec' を強く。" },
+            { q: "これについて後ほどメールで連絡します。", a: "I will follow up on this by email later.", advice: "follow up on は「フォロワップオン」と結合します。" },
+            { q: "詳細は次回の会議で決定します。", a: "The details will be decided in the next meeting.", advice: "details（ディーテイルズ）は最初の音を強く。" },
+            { q: "本日の決定事項をチャットに送りました。", a: "I sent today's conclusions in the chat.", advice: "conclusions（コンクルージョンズ）は 'clu' にアクセント。" },
+            { q: "他に付け加えることはありますか。", a: "Is there anything else anyone would like to add?", advice: "anything else は「エニシングエルス」と一息で。" },
+            { q: "質問がなければ、これで終了します。", a: "If there are no questions, we will finish here.", advice: "finish here は「フィニッシュヒア」とスムーズに。" },
+            { q: "素晴らしいディスカッションをありがとうございました。", a: "Thank you for the great discussion today.", advice: "discussion（ディスカス）は後半を強く発音します。" },
+            { q: "次回のミーティングでまたお会いしましょう。", a: "I look forward to seeing you at the next meeting.", advice: "look forward to は「ルックフォーワードゥトゥ」と滑らかに。" },
+            { q: "通信が切れてしまったようで、失礼しました。", a: "Sorry, I think my connection dropped for a moment.", advice: "dropped for は「ドロップトフォー」と発音します。" },
+            { q: "もう一度画面共有を試みてください。", a: "Could you please try sharing your screen again?", advice: "try sharing の 'y' から 'sh' への移行をスムーズに。" },
+            { q: "誰がプレゼンテーションを行いますか。", a: "Who is going to give the presentation today?", advice: "presentation（プレゼンテイション）は 'ta' を強く。" },
+            { q: "その資料を事前に共有していただけますか。", a: "Could you please share the material in advance?", advice: "in advance（インアドヴァンス）の 'va' をはっきりと。" },
+            { q: "この件は、メールで非同期に相談しましょう。", a: "Let's discuss this asynchronously via email.", advice: "asynchronously（エイスィンクロナスリー）の発音に注意。" },
+            { q: "それでは、皆さんお疲れ様でした。", a: "Alright, thank you everyone for your hard work.", advice: "hard work（ハードワーク）の 'r' の響きを意識して。" }
+        ];
+
+        let selectedQuiz = [];
+        let currentIdx = 0;
+        let isRecording = false;
+        let totalQuestions = 10;
+
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        let recognition = null;
+
+        if (SpeechRecognition) {
+            recognition = new SpeechRecognition();
+            recognition.lang = 'en-US';
+            recognition.continuous = true;
+            recognition.interimResults = true;
+        }
+
+        let mediaRecorder = null;
+        let audioChunks = [];
+        let userAudioBlobs = [];
+        let userTranscripts = [];
+
+        const startScreen = document.getElementById('start-screen');
+        const practiceScreen = document.getElementById('practice-screen');
+        const resultScreen = document.getElementById('result-screen');
+        const btnStart = document.getElementById('btn-start');
+        const btnRecord = document.getElementById('btn-record');
+        const btnNext = document.getElementById('btn-next');
+        const btnRestart = document.getElementById('btn-restart');
+        const questionNumber = document.getElementById('question-number');
+        const questionText = document.getElementById('question-text');
+        const progressBar = document.getElementById('progress-bar');
+        const timerStatus = document.getElementById('timer');
+        const recordStatus = document.getElementById('record-status');
+        const liveTranscript = document.getElementById('live-transcript');
+        const reportContainer = document.getElementById('report-container');
+        const selectCount = document.getElementById('select-count');
+
+        btnStart.onclick = startPractice;
+        btnRecord.onclick = toggleRecording;
+        btnNext.onclick = nextQuestion;
+        btnRestart.onclick = restartPractice;
+
+        function getRandomQuestions(count) {
+            return [...questionPool].sort(() => 0.5 - Math.random()).slice(0, count);
+        }
+
+        function startPractice() {
+            if (!recognition) {
+                alert("お使いのブラウザや環境は音声認識に対応していません。Google Chromeでお試しください。");
+                return;
+            }
+
+            totalQuestions = parseInt(selectCount.value, 10);
+
+            navigator.mediaDevices.getUserMedia({ audio: true })
+                .then(stream => {
+                    setupMediaRecorder(stream);
+                    selectedQuiz = getRandomQuestions(totalQuestions);
+                    currentIdx = 0;
+                    userTranscripts = [];
+                    userAudioBlobs = [];
+
+                    startScreen.style.display = 'none';
+                    resultScreen.style.display = 'none';
+                    practiceScreen.style.display = 'block';
+                    loadQuestion();
+                })
+                .catch(err => {
+                    alert("マイクの使用が許可されていないか、マイクが見つかりません。");
+                    console.error(err);
+                });
+        }
+
+        function setupMediaRecorder(stream) {
+            mediaRecorder = new MediaRecorder(stream);
+
+            mediaRecorder.ondataavailable = (event) => {
+                if (event.data.size > 0) {
+                    audioChunks.push(event.data);
+                }
+            };
+
+            mediaRecorder.onstop = () => {
+                const audioBlob = new Blob(audioChunks, { type: 'audio/mp3' });
+                userAudioBlobs[currentIdx] = audioBlob;
+                audioChunks = [];
+            };
+        }
+
+        function loadQuestion() {
+            questionNumber.textContent = `第 ${currentIdx + 1} 問 / ${totalQuestions}`;
+            questionText.textContent = selectedQuiz[currentIdx].q;
+            progressBar.style.width = `${((currentIdx + 1) / totalQuestions) * 100}%`;
+
+            btnNext.disabled = true;
+            btnNext.className = "btn-next";
+            recordStatus.textContent = "ボタンを押して、マイクに向かって英語で喋ってください";
+            liveTranscript.textContent = "";
+            btnRecord.className = "btn-record";
+            timerStatus.style.display = 'none';
+        }
+
+        function toggleRecording() {
+            if (!isRecording) {
+                try {
+                    liveTranscript.textContent = "（聞き取り中...）";
+                    userTranscripts[currentIdx] = "";
+                    userAudioBlobs[currentIdx] = null;
+                    audioChunks = [];
+
+                    recognition.start();
+                    if (mediaRecorder && mediaRecorder.state === "inactive") {
+                        mediaRecorder.start();
+                    }
+                } catch (e) {
+                    console.log(e);
+                }
+            } else {
+                recognition.stop();
+                if (mediaRecorder && mediaRecorder.state === "recording") {
+                    mediaRecorder.stop();
+                }
+            }
+        }
+
+        if (recognition) {
+            recognition.onstart = () => {
+                isRecording = true;
+                btnRecord.className = "btn-record recording";
+                recordStatus.textContent = "＼ 録音中 ／ 話し終えたら、もう一度ボタンを押して停止";
+                timerStatus.style.display = 'inline';
+            };
+
+            recognition.onresult = (event) => {
+                let interimTranscript = '';
+                let finalTranscript = '';
+
+                for (let i = 0; i < event.results.length; ++i) {
+                    if (event.results[i].isFinal) {
+                        finalTranscript += event.results[i][0].transcript + ' ';
+                    } else {
+                        interimTranscript += event.results[i][0].transcript;
+                    }
+                }
+
+                const fullText = (finalTranscript + interimTranscript).trim();
+                liveTranscript.textContent = fullText;
+                userTranscripts[currentIdx] = fullText;
+            };
+
+            recognition.onend = () => {
+                isRecording = false;
+                btnRecord.className = "btn-record";
+                timerStatus.style.display = 'none';
+
+                if (mediaRecorder && mediaRecorder.state === "recording") {
+                    mediaRecorder.stop();
+                }
+
+                if (!userTranscripts[currentIdx] || userTranscripts[currentIdx].trim() === "") {
+                    userTranscripts[currentIdx] = "(聞き取れませんでした)";
+                    recordStatus.textContent = "うまく聞き取れませんでした。もう一度お試しいただくか、次へ進んでください。";
+                } else {
+                    recordStatus.textContent = "聞き取り完了！下部にあなたの英語が表示されています。";
+                }
+
+                btnNext.disabled = false;
+                btnNext.className = "btn-next active";
+            };
+
+            recognition.onerror = (event) => {
+                if(event.error === 'not-allowed') {
+                    alert("マイクの使用が許可されていません。");
+                }
+            };
+        }
+
+        function nextQuestion() {
+            if (currentIdx < totalQuestions - 1) {
+                currentIdx++;
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function calculateScore(model, user) {
+            if (!user || user.includes("聞き取れませんでした")) return 0;
+
+            const cleanWords = (str) => str.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?"']/g,"").split(/\s+/).filter(Boolean);
+            const modelWords = cleanWords(model);
+            const userWords = cleanWords(user);
+
+            let matchCount = 0;
+            modelWords.forEach(w => {
+                if (userWords.includes(w)) {
+                    matchCount++;
+                }
+            });
+
+            let score = Math.round((matchCount / modelWords.length) * 100);
+            return Math.min(score, 100);
+        }
+
+        function showResults() {
+            practiceScreen.style.display = 'none';
+            resultScreen.style.display = 'block';
+            reportContainer.innerHTML = '';
+
+            selectedQuiz.forEach((item, index) => {
+                const userText = userTranscripts[index] || "(聞き取れませんでした)";
+                const score = calculateScore(item.a, userText);
+                const isGood = score >= 60;
+
+                const audioBlob = userAudioBlobs[index];
+                let audioHtml = '';
+                if (audioBlob && userText !== "(聞き取れませんでした)") {
+                    const audioUrl = URL.createObjectURL(audioBlob);
+                    audioHtml = `<audio src="${audioUrl}" controls class="audio-player"></audio>`;
+                } else {
+                    audioHtml = `<div style="font-size:0.8rem; color:#94a3b8; margin-top:5px;">※録音データがありません</div>`;
+                }
+
+                const div = document.createElement('div');
+                div.className = "report-item";
+                div.innerHTML = `
+                    <div class="report-top">
+                        <span style="color:#2563eb;">Q${index + 1}. ${item.q}</span>
+                        <span style="background:${isGood ? '#dcfce7':'#fee2e2'}; color:${isGood ? '#166534':'#991b1b'}; padding:2px 8px; border-radius:4px; font-size:0.8rem;">一致度: ${score}%</span>
+                    </div>
+
+                    <div class="txt-label">模範解答例（タップで音読 🔊）</div>
+                    <div class="model-ans" onclick="speakText(this.dataset.ans)" data-ans="${item.a.replace(/"/g, '&quot;')}" style="cursor:pointer;" title="クリックでお手本音声を再生">${item.a} 🔊</div>
+
+                    <div class="txt-label">AI文字起こし（あなたが喋った言葉）</div>
+                    <div class="user-ans ${isGood ? 'good':''}">${userText}</div>
+
+                    <div class="txt-label">あなたの録音（聞き返し）</div>
+                    ${audioHtml}
+
+                    <div class="comment-box">
+                        <div style="font-weight:bold; color:#1e40af; font-size:0.8rem;">💡 この問題の発音アドバイス</div>
+                        <div style="margin-top:3px;">${item.advice}</div>
+                    </div>
+                `;
+                reportContainer.appendChild(div);
+            });
+        }
+
+        function restartPractice() {
+            location.reload();
+        }
+
+        function speakText(text) {
+           if ('speechSynthesis' in window) {
+              window.speechSynthesis.cancel();
+              const utterance = new SpeechSynthesisUtterance(text);
+              utterance.lang = 'en-US';
+              utterance.rate = 0.95;
+              window.speechSynthesis.speak(utterance);
+           } else {
+              alert("お使いのブラウザは音声読み上げに対応していません。Google Chrome等でお試しください。");
+           }
+        }
+    </script>
+</body>
+</html>

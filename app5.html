@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Business English Reading Practice</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .fade-in { animation: fadeIn 0.25s ease-in-out; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .bold-vocab { font-weight: 700; color: #2563eb; background-color: #eff6ff; padding: 0 4px; border-radius: 4px; }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans min-h-screen flex flex-col">
+
+  <!-- ヘッダー -->
+  <header class="bg-blue-600 text-white shadow-md sticky top-0 z-10">
+    <div class="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
+      <h1 class="text-lg font-bold flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+        </svg>
+        Business Reading App
+      </h1>
+      <div class="flex items-center gap-2">
+        <select id="lessonSelect" class="bg-white text-gray-800 text-sm rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-300">
+          <!-- オプションはJSで動的生成 -->
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <!-- メインレイアウト（上下分割型） -->
+  <main class="flex-grow max-w-4xl mx-auto px-4 py-6 w-full flex flex-col gap-6">
+    
+    <!-- 上段：英文 -->
+    <section class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <div class="bg-gray-100 border-b border-gray-200 px-5 py-2.5 flex justify-between items-center">
+        <h2 class="text-sm font-bold text-gray-600 uppercase tracking-wider" id="lessonTitle">Passage 1</h2>
+        <span class="text-xs font-bold bg-blue-100 text-blue-700 px-2 py-0.5 rounded">CEFR A2-B1</span>
+      </div>
+      <div class="p-6 text-lg leading-relaxed text-gray-700 font-normal" id="readingText">
+        <!-- 英文本文 -->
+      </div>
+    </section>
+
+    <!-- 下段：質問・回答エリア -->
+    <section class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden flex flex-col">
+      <div class="bg-gray-100 border-b border-gray-200 px-5 py-2.5 flex justify-between items-center">
+        <h2 class="text-sm font-bold text-gray-600 uppercase tracking-wider">Quiz Section</h2>
+        <!-- クイズの進行度インジケーター -->
+        <div class="text-xs text-gray-500 font-medium" id="quizProgress">Question 1 / 4</div>
+      </div>
+      
+      <div class="p-6 flex-grow flex flex-col justify-between min-h-[220px]">
+        <!-- 質問と回答表示部分 -->
+        <div class="space-y-4">
+          <div id="quizQuestion" class="text-xl font-semibold text-gray-800 fade-in">
+            <!-- 質問文 -->
+          </div>
+          <div id="quizAnswer" class="hidden p-4 bg-blue-50 text-blue-800 rounded-lg border border-blue-100 text-base font-medium fade-in">
+            <!-- 答え -->
+          </div>
+        </div>
+
+        <!-- クイズの操作ボタン -->
+        <div class="mt-6 flex justify-between items-center gap-4">
+          <button id="showAnsBtn" class="px-5 py-2 bg-gray-800 hover:bg-gray-900 text-white rounded-lg font-medium transition-colors text-sm">
+            Show Answer
+          </button>
+          <button id="nextQuizBtn" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors text-sm flex items-center gap-1">
+            Next Question
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // 30レッスン分のデータ（データ本体は省略せずに保持）
+    const lessons = [
+      {
+        text: "Starting a new business requires careful planning and research. First, entrepreneurs must identify a unique product or service that meets a consumer need. They also need to study their competitors to understand the market. Next, writing a clear business plan is essential to secure funding from investors or banks. This plan outlines the company's goals, target audience, and financial projections for the first few years. Many startups fail in their first year because they run out of money. Therefore, managing cash flow carefully from the very beginning is vital. Although taking risks is **inevitable** in business, successful business owners always prepare for potential challenges before launching.",
+        qas: [
+          { q: "Q1. What is this text about?", a: "A1. How to successfully plan and start a new business." },
+          { q: "Q2. What is needed to secure funding from investors or banks?", a: "A2. A clear business plan." },
+          { q: "Q3. Why do many startups fail in their first year?", a: "A3. Because they run out of money." },
+          { q: "Q4. What must successful business owners do before launching?", a: "A4. Prepare for potential challenges." }
+        ]
+      },
+      {
+        text: "Customer service is a key factor that determines the success of a modern company. In today’s competitive market, consumers have many choices, so businesses must work hard to keep them loyal. When a customer encounters a problem, employees should respond quickly and politely. Dealing with complaints effectively can actually turn a dissatisfied customer into a regular one. Many companies now use artificial intelligence, such as chatbots, to handle simple inquiries around the clock. However, human empathy is still **indispensable** for solving complex emotional issues. Providing an excellent customer experience helps a company build a strong reputation and increase its sales over time.",
+        qas: [
+          { q: "Q1. What is this text about?", a: "A1. The importance and modern methods of customer service." },
+          { q: "Q2. Why must businesses work hard to keep customers loyal today?", a: "A2. Because consumers have many choices in a competitive market." },
+          { q: "Q3. What can happen if a company deals with complaints effectively?", a: "A3. It can turn a dissatisfied customer into a regular one." },
+          { q: "Q4. Why is human empathy still needed despite the use of AI?", a: "A4. To solve complex emotional issues." }
+        ]
+      },
+      {
+        text: "Remote work has become a common practice for many companies worldwide. Thanks to modern technology, employees can perform their tasks from home or any location with internet access. This lifestyle offers great **flexibility**, allowing workers to save time and money on daily commuting. Companies can also reduce their office expenses, such as electricity and rent. However, working remotely presents some unique challenges. It can be difficult for team members to maintain effective communication and collaborate on projects without face-to-face interaction. Some employees also feel lonely or find it hard to separate their work life from their personal time.",
+        qas: [
+          { q: "Q1. What is this text about?", a: "A1. The benefits and challenges of remote work." },
+          { q: "Q2. What allows employees to work from home today?", a: "A2. Modern technology." },
+          { q: "Q3. How can companies save money through remote work?", a: "A3. By reducing office expenses like electricity and rent." },
+          { q: "Q4. What is one challenge of working remotely mentioned in the text?", a: "A4. It can be difficult to maintain effective communication (or feel lonely)." }
+        ]
+      },
+      {
+        text: "Marketing plays a crucial role in introducing new products to the public. Companies use various strategies, such as social media campaigns, television advertisements, and influencer partnerships, to attract potential buyers. The main goal is to create strong brand awareness and convince consumers that the product is worth buying. Before launching a campaign, marketing teams must conduct extensive research to understand the preferences of their target **demographics**. They need to know what their customers like, how much they can spend, and where they shop. A creative and well-organized marketing strategy can significantly boost a company's revenue and market share.",
+        qas: [
+          { q: "Q1. What is this text about?", a: "A1. The role and strategies of product marketing." },
+          { q: "Q2. What are some marketing strategies mentioned in the text?", a: "A2. Social media campaigns, TV advertisements, and influencer partnerships." },
+          { q: "Q3. What is the main goal of marketing?", a: "A3. To create strong brand awareness and convince consumers to buy." },
+          { q: "Q4. What must marketing teams do before launching a campaign?", a: "A4. Conduct extensive research to understand target demographics." }
+        ]
+      },
+      {
+        text: "E-commerce has completely transformed the retail industry over the past few decades. Today, millions of consumers prefer shopping online rather than visiting physical stores. Online platforms allow people to browse thousands of products, compare prices, and read customer reviews from the comfort of their homes. This convenience has forced traditional brick-and-mortar stores to adapt by creating their own websites. For businesses, online selling expands their market reach to a global audience. However, companies must invest heavily in **logistics** to ensure fast and secure delivery. Providing smooth return policies is also essential to build trust with online shoppers.",
+        qas: [
+          { q: "Q1. What is this text about?", a: "A1. The transformation and challenges of the e-commerce industry." },
+          { q: "Q2. Why do millions of consumers prefer shopping online?", a: "A2. Because they can browse products, compare prices, and read reviews at home." },
+          { q: "Q3. How have traditional stores adapted to the rise of e-commerce?", a: "A3. By creating their own websites." },
+          { q: "Q4. What must online businesses invest in to ensure fast delivery?", a: "A4. Logistics." }
+        ]
+      },
+      {
+        text: "Teamwork is essential for achieving big goals in any corporate environment. When employees with different skills and backgrounds work together, they can generate creative ideas and solve complex problems faster. Effective communication is the foundation of successful collaboration. Team members must listen to each other, share information openly, and respect diverse opinions. A good manager plays a vital role in keeping the team motivated and focused on the same **objectives**. When conflicts arise, they should be resolved quickly through open discussion. Celebrating small victories together also helps build trust and strengthens the bond among coworkers.",
+        qas: [
+          { q: "Q1. What is this text about?", a: "A1. The importance and key elements of effective teamwork." },
+          { q: "Q2. What is the foundation of successful collaboration?", a: "A2. Effective communication." },
+          { q: "Q3. What is the role of a good manager mentioned in the text?", a: "A3. Keeping the team motivated and focused on the same objectives." },
+          { q: "Q4. How should conflicts within a team be resolved?", a: "A4. Through open discussion." }
+        ]
+      },
+      {
+        text: "Time management is a critical skill for every professional who wants to succeed. In a busy workplace, employees often have to handle multiple tasks with tight deadlines. To work efficiently, it is important to prioritize assignments by focusing on the most urgent and important ones first. Creating a daily to-do list and setting specific goals can help workers stay organized. Avoiding **distractions**, such as checking personal messages or browsing social media during work hours, is also essential. Good time management not only improves productivity but also reduces stress, allowing employees to maintain a healthy work-life balance.",
+        qas: [
+          { q: "Q1. What is this text about?", a: "A1. The importance and benefits of good time management." },
+          { q: "Q2. How should employees prioritize their assignments?", a: "A2. By focusing on the most urgent and important ones first." },
+          { q: "Q3. What tools can help workers stay organized daily?", a: "A3. A daily to-do list and specific goals." },
+          { q: "Q4. What is one benefit of good time management besides improving productivity?", a: "A4. It reduces stress (or allows a healthy work-life balance)." }
+        ]
+      },
+      {
+        text: "Job interviews are a crucial step in the hiring process for both employers and candidates. For companies, the interview is an opportunity to evaluate a applicant's skills, experience, and personality. For job seekers, it is a chance to demonstrate why they are the best fit for the position. To prepare effectively, candidates should research the company's values, products, and recent achievements. Arriving on time and dressing professionally are **imperative** to make a good first impression. During the interview, candidates should answer questions clearly and give specific examples of their past work to show their capabilities.",
+        qas: [
+          { q: "Q1. What is this text about?", a: "A1. The purpose and preparation for job interviews." },
+          { q: "Q2. What can companies evaluate during a job interview?", a: "A2. An applicant's skills, experience, and personality." },
+          { q: "Q3. How should candidates prepare for an interview?", a: "A3. By researching the company's values, products, and achievements." },
+          { q: "Q4. What should candidates do during the interview to show their capabilities?", a: "A4. Answer questions clearly and give specific examples of past work." }
+        ]
+      },
+      {
+        text: "Productivity is a major goal for businesses that want to increase their profits. It measures how efficiently a company can produce goods or services using its available resources, such as time and labor. Modern companies use various methods to boost productivity, such as introducing new software tools and automating repetitive tasks. Providing regular training for employees is also **beneficial**, as it helps them update their skills and work faster. However, managers must remember that pushing workers too hard can lead to burnout. Maintaining a positive work environment and supporting employee well-being are essential for long-term productivity.",
+        qas: [
+          { q: "Q1. What is this text about?", a: "A1. How businesses measure and improve workplace productivity." },
+          { q: "Q2. What does productivity measure?", a: "A2. How efficiently a company produces goods or services using resources." },
+          { q: "Q3. Name one method companies use to boost productivity.", a: "A3. Introducing new software, automating tasks, or providing training." },
+          { q: "Q4. What can happen if managers push workers too hard?", a: "A4. It can lead to burnout." }
+        ]
+      },
+      {
+        text: "Corporate social responsibility, or CSR, has become an important concept for modern businesses. Today, consumers and investors expect companies to do more than just make a profit; they want them to contribute positively to society. Many businesses now participate in environmental initiatives, such as reducing plastic waste, using renewable energy, and planting trees. Others support local communities by donating money to schools or helping people in need. Practicing CSR helps a company build a positive brand image and attract ethical consumers. Ultimately, long-term business success is closely linked to the **sustainability** of the community and the planet.",
+        qas: [
+          { q: "Q1. What is this text about?", a: "A1. The idea and benefits of Corporate Social Responsibility (CSR)." },
+          { q: "Q2. What do consumers and investors expect from modern companies?", a: "A2. To contribute positively to society (do more than just make a profit)." },
+          { q: "Q3. What are some environmental initiatives mentioned in the text?", a: "A3. Reducing plastic waste, using renewable energy, and planting trees." },
+          { q: "Q4. How does practicing CSR help a company?", a: "A4. It helps build a positive brand image and attract ethical consumers." }
+        ]
+      },
+      {
+        text: "Effective leadership is a vital element for the growth and stability of any organization. A great leader does not just give orders; they inspire and guide their employees toward a shared vision. They must possess excellent communication skills to explain goals clearly and listen to feedback from their team. Good leaders also delegate tasks according to each worker's strengths, which helps build confidence. When mistakes happen, a strong leader takes responsibility and focuses on finding solutions rather than blaming others. By creating an atmosphere of trust and mutual respect, leaders can significantly improve employee retention and **morale**.",
+        qas: [
+          { q: "Q1. What is this text about?", a: "A1. The qualities and roles of an effective corporate leader." },
+          { q: "Q2. What does a great leader do instead of just giving orders?", a: "A2. They inspire and guide their employees toward a shared vision." },
+          { q: "Q3. How should a good leader delegate tasks?", a: "A3. According to each worker's strengths." },
+          { q: "Q4. What does a strong leader do when mistakes happen?", a: "A4. Takes responsibility and focuses on finding solutions." }
+        ]
+      },
+      {
+        text: "Public speaking is an essential skill for business professionals, especially when presenting new ideas to clients or managers. A successful presentation requires thorough preparation and a clear structure. The speaker should start with an engaging introduction to catch the audience's attention. The main body should deliver key points logically, using visual aids like slides or charts to support the message. Finally, the conclusion should summarize the main ideas and include a call to action. Maintaining eye contact and speaking at a moderate pace are **advantageous** for keeping the audience interested and conveying confidence during the speech.",
+        qas: [
+          { q: "Q1. What is this text about?", a: "A1. How to deliver a successful business presentation." },
+          { q: "Q2. What is required for a successful presentation?", a: "A2. Thorough preparation and a clear structure." },
+          { q: "Q3. How should a speaker support their message in the main body?", a: "A3. By using visual aids like slides or charts." },
+          { q: "Q4. What helps a speaker convey confidence during a speech?", a: "A4. Maintaining eye contact and speaking at a moderate pace." }
+        ]
+      },
+      {
+        text: "Financial literacy is an essential skill for anyone who wants to manage a business or personal finance successfully. It involves understanding how money works, including budgeting, investing, and saving. For business owners, tracking income and expenses daily is crucial to maintain a healthy budget. They must also learn how to manage debts and avoid unnecessary spending. Understanding basic financial concepts helps entrepreneurs make **informed** decisions about expanding their operations or investing in new equipment. Without proper financial knowledge, even a creative business idea can quickly fail due to poor cash management and high debts.",
+        qas: [
+          { q: "Q1. What is this text about?", a: "A1. The importance of financial literacy for business owners." },
+          { q: "Q2. What does financial literacy involve?", a: "A2. Understanding how money works (budgeting, investing, and saving)." },
+          { q: "Q3. Why is tracking income and expenses daily crucial for business owners?", a: "A3. To maintain a healthy budget." },
+          { q: "Q4. What can happen to a creative business idea without proper financial knowledge?", a: "A4. It can quickly fail due to poor cash management and high debts." }
+        ]
+      },
+      {
+        text: "Artificial intelligence is rapidly changing the way businesses operate across various industries. Many companies deploy AI algorithms to analyze vast amounts of customer data, allowing them to predict market trends accurately. In manufacturing, smart robots automate dangerous and repetitive assembly tasks, improving workplace safety. AI also enhances efficiency in administration by scheduling meetings and organizing digital documents automatically. While these technological **advancements** create new opportunities, they also raise concerns about job displacement. Therefore, workers need to learn new digital skills to adapt to the changing job market and remain competitive in their careers.",
+        qas: [
+          { q: "Q1. What is this text about?", a: "A1. How artificial intelligence is changing business operations." },
+          { q: "Q2. How do companies use AI algorithms regarding customer data?", a: "A2. To analyze data and predict market trends accurately." },
+          { q: "Q3. What is the benefit of using smart robots in manufacturing?", a: "A3. They automate dangerous/repetitive tasks and improve safety." },
+          { q: "Q4. What concern is raised by these technological advancements?", a: "A4. Job displacement." }
+        ]
+      },
+      {
+        text: "A business contract is a legally binding agreement between two or more parties. It defines the rights, responsibilities, and obligations of everyone involved in a transaction. Contracts are used in various business situations, such as hiring employees, purchasing goods, or partnering with other firms. Before signing a contract, it is **critical** to read every clause carefully and understand the terms completely. If the language is too complicated, consulting a legal expert is highly recommended. Clear contracts help prevent misunderstandings and protect the interests of all parties if a dispute arises during the business relationship.",
+        qas: [
+          { q: "Q1. What is this text about?", a: "A1. The definition and importance of business contracts." },
+          { q: "Q2. What is a business contract?", a: "A2. A legally binding agreement between two or more parties." },
+          { q: "Q3. What should you do before signing a contract?", a: "A3. Read every clause carefully and understand the terms completely." },
+          { q: "Q4. Why are clear contracts helpful in a business relationship?", a: "A4. They prevent misunderstandings and protect interests if a dispute arises." }
+        ]
+      },
+      {
+        text: "Networking is a powerful tool for career advancement and business growth. It involves building and maintaining professional relationships with people in your industry. Attending business conferences, seminars, and local community events provides excellent opportunities to meet potential clients, partners, or employers. During these events, exchanging business cards and having brief conversations can lead to future collaborations. Online platforms like LinkedIn also allow professionals to connect globally and share industry insights. Successful networking requires a **reciprocal** approach; you should not only seek help from others but also offer your support whenever possible.",
+        qas: [
+          { q: "Q1. What is this text about?", a: "A1. The value and methods of professional networking." },
+          { q: "Q2. What does networking involve?", a: "A2. Building and maintaining professional relationships with industry people." },
+          { q: "Q3. Name one online platform mentioned for professional networking.", a: "A3. LinkedIn." },
+          { q: "Q4. What kind of approach does successful networking require?", a: "A4. A reciprocal approach (seeking help and offering support)." }
+        ]
+      },
+      {
+        text: "Supply chain management is the process of handling the entire production flow of a good or service. It starts from raw materials and ends when the final product is delivered to the customer. A well-managed supply chain ensures that products are created efficiently and delivered on time, minimizing delays. Companies must work closely with their suppliers, manufacturers, and logistics partners to keep operations running smoothly. Unexpected events, such as natural disasters or political instability, can easily **disrupt** the global supply chain. Therefore, businesses must develop backup plans to source materials from alternative suppliers to avoid production stops.",
+        qas: [
+          { q: "Q1. What is this text about?", a: "A1. The basics and risks of supply chain management." },
+          { q: "Q2. What is supply chain management?", a: "A2. The process of handling the entire production flow of a good or service." },
+          { q: "Q3. What can happen to the global supply chain during natural disasters?", a: "A3. It can be easily disrupted." },
+          { q: "Q4. Why must businesses develop backup plans for sourcing materials?", a: "A4. To avoid production stops by using alternative suppliers." }
+        ]
+      },
+      {
+        text: "Brand identity is the visible elements of a brand, such as its color, design, and logo, that identify and distinguish it in consumers' minds. A strong brand identity helps a company stand out from its competitors and creates a lasting impression. Beyond visuals, a brand also represents the company's values, mission, and the quality of its products. Consistency across all marketing platforms, including websites, packaging, and advertisements, is **vital** to build consumer trust. When customers recognize a brand instantly and associate it with positive experiences, they are more likely to choose it over cheaper alternatives.",
+        qas: [
+          { q: "Q1. What is this text about?", a: "A1. The meaning and importance of a strong brand identity." },
+          { q: "Q2. What are some visible elements of brand identity?", a: "A2. Color, design, and logo." },
+          { q: "Q3. Why is consistency across marketing platforms vital?", a: "A3. To build consumer trust." },
+          { q: "Q4. What happens when customers associate a brand with positive experiences?", a: "A4. They are more likely to choose it over cheaper alternatives." }
+        ]
+      },
+      {
+        text: "Negotiation is a core business skill used daily to reach agreements, resolve conflicts, and make deals. Whether discussing a salary raise, closing a sale, or establishing a partnership, effective negotiation requires clear preparation. Before entering a meeting, you must understand your goals, know your limits, and research the other party's needs. Listening actively to the opponent's arguments is **essential** to find common ground. A successful negotiation should ideally result in a win-win outcome, where both sides feel satisfied with the agreement. Being patient and staying calm under pressure can help you achieve better results.",
+        qas: [
+          { q: "Q1. What is this text about?", a: "A1. The skills and strategies for effective business negotiation." },
+          { q: "Q2. What is required before entering a negotiation meeting?", a: "A2. Understanding your goals, knowing limits, and researching the other party." },
+          { q: "Q3. Why is active listening important during a negotiation?", a: "A3. To find common ground." },
+          { q: "Q4. What is the ideal outcome of a successful negotiation?", a: "A4. A win-win outcome where both sides feel satisfied." }
+        ]
+      },
+      {
+        text: "Employee retention refers to a company’s ability to keep its employees and prevent them from leaving for other jobs. High turnover can be very **costly** for businesses, as recruiting and training new workers requires significant time and money. To retain top talent, companies must offer competitive salaries, good benefits, and opportunities for career growth. Recognizing employees' achievements and providing constructive feedback also helps boost job satisfaction. Furthermore, maintaining a healthy work environment that supports work-life balance encourages staff to stay long-term, which ultimately improves company stability and productivity.",
+        qas: [
+          { q: "Q1. What is this text about?", a: "A1. How companies can improve employee retention." },
+          { q: "Q2. What does employee retention refer to?", a: "A2. A company’s ability to keep its employees." },
+          { q: "Q3. Why is high employee turnover bad for businesses?", a: "A3. Because recruiting and training new workers is very costly." },
+          { q: "Q4. Name one way companies can encourage staff to stay long-term.", a: "A4. Offer competitive salaries, recognize achievements, or support work-life balance." }
+        ]
+      },
+      {
+        text: "Market research is the process of gathering information about consumers' needs and preferences to determine the viability of a product. Companies use various methods to collect data, including online surveys, focus groups, and analyzing competitor sales figures. This information helps businesses understand their target audience and tailor their marketing strategies accordingly. Conducting thorough research before launching a new product reduces the risk of financial failure significantly. In today’s rapidly changing business environment, continuous market research is **imperative** for companies to stay ahead of new trends and adapt to evolving consumer behaviors.",
+        qas: [
+          { q: "Q1. What is this text about?", a: "A1. The role of market research in corporate strategy." },
+          { q: "Q2. What is the purpose of market research?", a: "A2. To gather information about consumers to determine a product's viability." },
+          { q: "Q3. What methods do companies use to collect data?", a: "A3. Online surveys, focus groups, and analyzing competitor sales figures." },
+          { q: "Q4. Why is continuous market research imperative in today's business environment?", a: "A4. To stay ahead of new trends and adapt to evolving consumer behaviors." }
+        ]
+      },
+      {
+        text: "Business ethics refers to the moral principles that guide the way a business behaves in the marketplace. Acting ethically means treating employees fairly, providing safe products, and being transparent with investors and customers. Companies that prioritize ethics avoid dishonest practices like false advertising or tax evasion. Although unethical behavior might bring short-term profits, it eventually destroys a company’s reputation and leads to legal penalties. Building an ethical corporate culture creates long-term trust with consumers, which is a valuable **asset** that protects the company during economic crises.",
+        qas: [
+          { q: "Q1. What is this text about?", a: "A1. The concept and long-term benefits of business ethics." },
+          { q: "Q2. What does acting ethically mean for a business?", a: "A2. Treating employees fairly, providing safe products, and being transparent." },
+          { q: "Q3. What can happen to a company that behaves unethically?", a: "A3. It destroys its reputation and leads to legal penalties." },
+          { q: "Q4. What is one long-term benefit of building an ethical corporate culture?", a: "A4. It creates long-term trust with consumers." }
+        ]
+      },
+      {
+        text: "Product development is the complete process of bringing a new product idea to the commercial market. It involves several stages, including brainstorming, designing, prototyping, and testing. During the testing phase, companies collect feedback from a small group of users to identify any technical defects or usability issues. Making adjustments based on this feedback is **crucial** before starting mass production. Successful product development requires close collaboration between engineering, marketing, and sales teams. A well-designed product that genuinely solves a customer problem can create a strong competitive advantage and drive substantial company growth.",
+        qas: [
+          { q: "Q1. What is this text about?", a: "A1. The steps involved in successful product development." },
+          { q: "Q2. What are the stages involved in product development?", a: "A2. Brainstorming, designing, prototyping, and testing." },
+          { q: "Q3. Why do companies collect feedback during the testing phase?", a: "A3. To identify technical defects or usability issues before mass production." },
+          { q: "Q4. What teams must collaborate closely for successful product development?", a: "A4. Engineering, marketing, and sales teams." }
+        ]
+      },
+      {
+        text: "Project management is the practice of leading a team to achieve specific project goals within a defined timeline and budget. A project manager is responsible for planning tasks, allocating resources, and monitoring progress daily. They use specialized software tools to track deadlines and ensure that team members collaborate effectively. Clear communication is **fundamental** to prevent misunderstandings and keep everyone focused on the project's scope. When unexpected obstacles occur, the manager must adapt the plan quickly to avoid project delays. Completing a project successfully on time enhances the team's credibility and satisfies clients.",
+        qas: [
+          { q: "Q1. What is this text about?", a: "A1. The responsibilities and tools of project management." },
+          { q: "Q2. What is a project manager responsible for?", a: "A2. Planning tasks, allocating resources, and monitoring progress." },
+          { q: "Q3. Why is clear communication fundamental in project management?", a: "A3. To prevent misunderstandings and keep everyone focused on the scope." },
+          { q: "Q4. What should a manager do when unexpected obstacles occur?", a: "A4. Adapt the plan quickly to avoid project delays." }
+        ]
+      },
+      {
+        text: "Corporate culture is the shared values, beliefs, and behaviors that determine how a company's employees and management interact. A positive corporate culture fosters open communication, collaboration, and mutual respect among staff members. When employees feel valued and supported by their company, their productivity and motivation increase significantly. On the other hand, a toxic environment can lead to high stress and low morale. Companies can build a healthy culture by encouraging employee feedback, offering flexible work options, and promoting diversity. Investing in a positive workplace environment is **beneficial** for long-term business growth.",
+        qas: [
+          { q: "Q1. What is this text about?", a: "A1. The impact of corporate culture on workplace productivity." },
+          { q: "Q2. What is corporate culture?", a: "A2. The shared values, beliefs, and behaviors within a company." },
+          { q: "Q3. What can happen to employees in a toxic environment?", a: "A3. It can lead to high stress and low morale." },
+          { q: "Q4. How can companies build a healthy corporate culture?", a: "A4. By encouraging feedback, offering flexible work, and promoting diversity." }
+        ]
+      },
+      {
+        text: "Financial forecasting is the process of estimating a company’s future financial outcomes by examining past data and market trends. It helps business owners predict revenues, expenses, and capital requirements for the upcoming months or years. Having accurate forecasts allows management to make **strategic** decisions regarding hiring new staff, purchasing inventory, or expanding facilities. It also helps companies prepare for potential economic downturns by securing credit lines in advance. Without realistic financial forecasting, a business might face severe cash shortages, making it difficult to pay suppliers or employees on time.",
+        qas: [
+          { q: "Q1. What is this text about?", a: "A1. How businesses use financial forecasting for strategic planning." },
+          { q: "Q2. What is financial forecasting?", a: "A2. Estimating future financial outcomes by examining past data and trends." },
+          { q: "Q3. What kind of decisions can management make with accurate forecasts?", a: "A3. Strategic decisions about hiring, purchasing inventory, or expanding." },
+          { q: "Q4. What can happen to a business without realistic financial forecasting?", a: "A4. It might face severe cash shortages." }
+        ]
+      },
+      {
+        text: "Digital marketing involves promoting products or services using digital channels, such as search engines, websites, and mobile applications. Compared to traditional advertising, digital marketing allows companies to target specific audiences based on their online behavior and interests. It also provides precise tools to measure the effectiveness of a campaign in real-time, showing exactly how many people clicked an ad. This data-driven approach helps businesses optimize their advertising budget and improve their return on investment. Staying updated with the latest technological trends is **essential** for digital marketers to remain effective in a competitive market.",
+        qas: [
+          { q: "Q1. What is this text about?", a: "A1. The features and advantages of digital marketing." },
+          { q: "Q2. How does digital marketing allow companies to target specific audiences?", a: "A2. Based on their online behavior and interests." },
+          { q: "Q3. What one advantage of digital marketing over traditional advertising?", a: "A3. It allows precise targeting and real-time measurement of ad effectiveness." },
+          { q: "Q4. Why must digital marketers stay updated with technological trends?", a: "A4. To remain effective in a competitive market." }
+        ]
+      },
+      {
+        text: "Consumer behavior is the study of how individual customers select, buy, use, and dispose of products and services. Understanding consumer behavior helps businesses design better products and create effective marketing strategies. Various factors influence buying decisions, including cultural background, social status, and personal emotions. Recently, environmental sustainability has become a significant **influence** on consumer choices, with many people preferring eco-friendly brands. By analyzing purchasing patterns and customer feedback, companies can predict future demands accurately and build stronger, long-lasting relationships with their clients, ensuring steady business growth.",
+        qas: [
+          { q: "Q1. What is this text about?", a: "A1. The study of consumer behavior and its value to businesses." },
+          { q: "Q2. What is consumer behavior?", a: "A2. The study of how customers select, buy, use, and dispose of products." },
+          { q: "Q3. What environmental factor has recently influenced consumer choices?", a: "A3. Environmental sustainability (preference for eco-friendly brands)." },
+          { q: "Q4. How can companies accurately predict future demands?", a: "A4. By analyzing purchasing patterns and customer feedback." }
+        ]
+      },
+      {
+        text: "Risk management is the process of identifying, assessing, and controlling potential threats to an organization's capital and earnings. These risks can stem from various sources, including financial uncertainty, legal liabilities, and technology failures. A comprehensive risk management plan helps companies minimize the negative impact of unexpected events. For example, businesses install cybersecurity systems to protect sensitive data from hackers. They also purchase insurance to cover potential property damage. Proactively managing risks is **advantageous** because it ensures business continuity and protects the company's reputation during unexpected crises.",
+        qas: [
+          { q: "Q1. What is this text about?", a: "A1. The process and benefits of corporate risk management." },
+          { q: "Q2. What is risk management?", a: "A2. The process of identifying, assessing, and controlling potential threats." },
+          { q: "Q3. Give one example of how a business protects its data from hackers?", a: "A3. By installing cybersecurity systems." },
+          { q: "Q4. Why is proactively managing risks advantageous for a company?", a: "A4. It ensures business continuity and protects the company's reputation." }
+        ]
+      },
+      {
+        text: "Quality control is a process through which a business seeks to ensure that product quality is maintained or improved. It involves testing units and determining if they are within the specifications for the final product. In manufacturing, workers examine samples from the production line to detect any defects early. If a problem is found, the production process is halted to fix the issue immediately. Implementing strict quality control is **vital** to prevent defective items from reaching consumers. Delivering high-quality products consistently builds customer satisfaction and protects the brand from expensive product recalls.",
+        qas: [
+          { q: "Q1. What is this text about?", a: "A1. The role of quality control in manufacturing and business." },
+          { q: "Q2. What is quality control?", a: "A2. A process to ensure product quality is maintained or improved." },
+          { q: "Q3. What happens in manufacturing if a product defect is found?", a: "A3. The production process is halted to fix the issue immediately." },
+          { q: "Q4. What are the benefits of delivering high-quality products consistently?", a: "A4. It builds customer satisfaction and protects the brand from recalls." }
+        ]
+      }
+    ];
+
+    let currentLessonIndex = 0;
+    let currentQuizIndex = 0;
+
+    // DOM要素の取得
+    const textContainer = document.getElementById('readingText');
+    const questionText = document.getElementById('quizQuestion');
+    const answerContainer = document.getElementById('quizAnswer');
+    const quizProgress = document.getElementById('quizProgress');
+    
+    const showAnsBtn = document.getElementById('showAnsBtn');
+    const nextQuizBtn = document.getElementById('nextQuizBtn');
+    const lessonSelect = document.getElementById('lessonSelect');
+    const lessonTitle = document.getElementById('lessonTitle');
+
+    // 初期化処理
+    function init() {
+      // セレクトボックスの生成
+      lessons.forEach((_, index) => {
+        const option = document.createElement('option');
+        option.value = index;
+        option.innerText = `Lesson ${index + 1}`;
+        lessonSelect.appendChild(option);
+      });
+
+      // イベント設定
+      lessonSelect.addEventListener('change', (e) => {
+        currentLessonIndex = parseInt(e.target.value);
+        currentQuizIndex = 0;
+        renderLesson();
+      });
+
+      showAnsBtn.addEventListener('click', showAnswer);
+      nextQuizBtn.addEventListener('click', handleNextQuiz);
+
+      renderLesson();
+    }
+
+    // 画面の描画（選択したレッスンを表示）
+    function renderLesson() {
+      const lesson = lessons[currentLessonIndex];
+      
+      // プルダウンとタイトルの更新
+      lessonSelect.value = currentLessonIndex;
+      lessonTitle.innerText = `Passage ${currentLessonIndex + 1}`;
+
+      // 本文の整形（**単語** を青ハイライトに）
+      const formattedText = lesson.text.replace(/\*\*(.*?)\*\*/g, '<span class="bold-vocab">$1</span>');
+      textContainer.innerHTML = `<p>${formattedText}</p>`;
+      
+      // クイズ部分の初期化
+      renderQuizQuestion();
+    }
+
+    // クイズの質問を表示する
+    function renderQuizQuestion() {
+      const lesson = lessons[currentLessonIndex];
+      const totalQuizzes = lesson.qas.length;
+
+      // 回答欄は隠す
+      answerContainer.classList.add('hidden');
+      showAnsBtn.style.display = 'block';
+
+      if (currentQuizIndex < totalQuizzes) {
+        // 通常のクイズ表示
+        quizProgress.innerText = `Question ${currentQuizIndex + 1} / ${totalQuizzes}`;
+        
+        questionText.classList.remove('fade-in');
+        void questionText.offsetWidth; // 強制リフロー（アニメーションリセット）
+        
+        questionText.innerText = lesson.qas[currentQuizIndex].q;
+        questionText.classList.add('fade-in');
+        
+        nextQuizBtn.innerHTML = `Next Question <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>`;
+      } else {
+        // 全問終了時の表示
+        quizProgress.innerText = "Completed!";
+        questionText.innerText = "🎉 All questions in this lesson completed!";
+        showAnsBtn.style.display = 'none';
+
+        if (currentLessonIndex < lessons.length - 1) {
+          nextQuizBtn.innerHTML = `Next Lesson <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>`;
+        } else {
+          nextQuizBtn.innerHTML = `Back to Lesson 1`;
+        }
+      }
+    }
+
+    // 回答を表示する
+    function showAnswer() {
+      const lesson = lessons[currentLessonIndex];
+      if (currentQuizIndex >= lesson.qas.length) return;
+
+      answerContainer.innerText = lesson.qas[currentQuizIndex].a;
+      answerContainer.classList.remove('hidden');
+    }
+
+    // 次へボタンの処理
+    function handleNextQuiz() {
+      const lesson = lessons[currentLessonIndex];
+      
+      if (currentQuizIndex < lesson.qas.length) {
+        // 次の質問へ進む
+        currentQuizIndex++;
+        renderQuizQuestion();
+      } else {
+        // 次のレッスンへ進む、または最初に戻る
+        if (currentLessonIndex < lessons.length - 1) {
+          currentLessonIndex++;
+        } else {
+          currentLessonIndex = 0; // 最後まで行ったら最初に戻る
+        }
+        currentQuizIndex = 0;
+        renderLesson();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+
+    // アプリ起動
+    init();
+  </script>
+</body>
+</html>

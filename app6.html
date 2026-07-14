@@ -1,1 +1,529 @@
-@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Advanced Business English Reading Practice</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .fade-in { animation: fadeIn 0.25s ease-in-out; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans h-screen flex flex-col overflow-hidden">
+
+  <!-- ヘッダー (固定) -->
+  <header class="bg-blue-600 text-white shadow-md z-10 flex-shrink-0">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+      <h1 class="text-lg font-bold flex items-center gap-2 cursor-pointer" id="headerLogo">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+        </svg>
+        Business Reading App
+      </h1>
+      <div id="headerSelectContainer" class="hidden flex items-center gap-2">
+        <select id="lessonSelectHeader" class="bg-white text-gray-800 text-sm rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-300">
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <!-- カバーページ (スクロール可能) -->
+  <div id="coverPage" class="max-w-xl mx-auto px-4 py-12 w-full flex-grow flex flex-col justify-center items-center fade-in overflow-y-auto">
+    <div class="text-center mb-8">
+      <h2 class="text-3xl font-extrabold text-gray-950 mb-3">Business Reading Practice</h2>
+      <p class="text-gray-500 font-medium">CEFR B2 レベルのビジネス英語リーディング（全20本）</p>
+    </div>
+   
+    <div class="bg-white border border-gray-200 rounded-2xl shadow-sm p-8 w-full space-y-6">
+      <div class="flex flex-col gap-2">
+        <label for="lessonSelectCover" class="text-sm font-bold text-gray-600 uppercase tracking-wider">① レッスンを選択</label>
+        <select id="lessonSelectCover" class="w-full bg-gray-50 border border-gray-300 rounded-xl px-4 py-3 text-lg font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700">
+        </select>
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label for="timerSetting" class="text-sm font-bold text-gray-600 uppercase tracking-wider">② タイマーを設定（制限時間）</label>
+        <select id="timerSetting" class="w-full bg-gray-50 border border-gray-300 rounded-xl px-4 py-3 text-lg font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700">
+          <option value="0">タイマーなし</option>
+          <option value="60">1 分</option>
+          <option value="120">2 分</option>
+          <option value="180" selected>3 分</option>
+          <option value="300">5 分</option>
+        </select>
+      </div>
+     
+      <button id="startLessonBtn" class="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-sm hover:shadow transition-all text-lg flex items-center justify-center gap-2">
+        学習を始める
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- 学習メインコンテナ (上下分割) -->
+  <div id="learningPage" class="hidden flex-grow flex flex-col h-full w-full overflow-hidden fade-in">
+   
+    <!-- 上側 60%: 本文表示エリア -->
+    <div class="h-[60%] flex flex-col bg-white border-b border-gray-300 min-h-0">
+      <div class="bg-gray-100 border-b border-gray-200 px-6 py-2 flex justify-between items-center flex-shrink-0">
+        <div class="flex items-center gap-4">
+          <button id="backToCoverBtn" class="inline-flex items-center gap-1.5 text-sm font-semibold text-blue-600 hover:text-blue-800 transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+            表紙へ
+          </button>
+          <h2 class="text-sm font-bold text-gray-600 uppercase tracking-wider border-l border-gray-300 pl-4" id="lessonTitle">Passage 1</h2>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="text-xs font-bold bg-blue-100 text-blue-700 px-2 py-0.5 rounded">CEFR B2 Level</span>
+          <div id="timerDisplayContainer" class="hidden flex items-center gap-1.5 bg-white border border-gray-300 px-3 py-1 rounded-full font-mono font-bold text-sm text-gray-700 shadow-sm">
+            <span id="timerTime">03:00</span>
+          </div>
+        </div>
+      </div>
+      <div class="w-full overflow-y-auto px-6 py-8 shadow-inner bg-slate-50/10 flex-grow">
+        <div class="max-w-3xl mx-auto text-base md:text-lg leading-relaxed text-gray-700 font-normal tracking-wide" id="readingText">
+        </div>
+      </div>
+    </div>
+
+    <!-- 下側 40%: クイズ・回答エリア -->
+    <div class="h-[40%] flex flex-col bg-white min-h-0 relative z-20 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+      <div class="bg-gray-50 border-b border-gray-200 px-6 py-2 flex justify-between items-center flex-shrink-0">
+        <h2 class="text-xs font-bold text-gray-500 uppercase tracking-wider">Quiz Section (Analysis)</h2>
+        <div class="text-xs text-gray-500 font-medium font-mono" id="quizProgress">Question 1 / 5</div>
+      </div>
+     
+      <div class="p-4 md:p-6 flex-grow flex flex-col justify-between overflow-y-auto min-h-0">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-start flex-grow overflow-y-auto mb-2">
+          <!-- 問題表示 -->
+          <div id="quizQuestion" class="text-sm md:text-base font-semibold text-gray-900 bg-white p-3 md:p-4 rounded-xl border border-gray-200 fade-in h-full overflow-y-auto">
+          </div>
+          <!-- 回答表示 -->
+          <div id="quizAnswer" class="hidden text-sm md:text-base p-3 md:p-4 bg-white text-gray-700 rounded-xl border border-gray-200 fade-in leading-relaxed h-full overflow-y-auto">
+          </div>
+        </div>
+
+        <!-- アクションボタン -->
+        <div class="flex justify-between items-center gap-4 flex-shrink-0 pt-3 border-t border-gray-100">
+          <button id="showAnsBtn" class="px-5 py-2 bg-gray-800 hover:bg-gray-900 text-white rounded-lg font-medium transition-colors text-xs md:text-sm">
+            Show Answer
+          </button>
+          <button id="nextQuizBtn" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors text-xs md:text-sm flex items-center gap-1">
+            Next Question
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const rawLessons = [
+      {
+        text: "In recent years, the rapid advancement of artificial intelligence (AI) and automation has fundamentally transformed the global labor market. According to a 2024 report by the World Economic Forum, approximately 43% of surveyed businesses plan to reduce their workforce due to technology integration, while 34% plan to expand it for the same reason. This shifting dynamic raises critical questions about employment stability and the future of human labor.\n\nProponents of automation argue that it eliminates repetitive, hazardous tasks, thereby allowing employees to focus on creative and strategic endeavors. In manufacturing, for instance, robotic arms handle heavy lifting and precise assembly with zero fatigue, reducing workplace injuries by over 15% in automated facilities. Furthermore, proponents suggest that technological revolutions historically create more jobs than they destroy, pointing to the rise of data analysts, software engineers, and digital marketers over the past decade.\n\nHowever, critics emphasize the severe socioeconomic challenges associated with rapid technological displacement. A study by the Brookings Institution revealed that roughly 25% of jobs in the United States face high exposure to automation, with administrative, food service, and transportation sectors being the most vulnerable. Workers in these industries often lack the specialized skills required to transition into high-tech roles immediately. Consequently, without substantial government intervention and corporate retraining programs, the wage gap between highly skilled and low-skilled workers is projected to widen by nearly 12% by 2030.\n\nUltimately, the impact of automation is not a simple narrative of human versus machine. Success in the modern economy requires a collaborative approach known as \"augmented intelligence,\" where human intuition pairs with machine efficiency. To mitigate the risks of mass unemployment, educational institutions and corporations must invest heavily in upskilling initiatives. Only by fostering continuous learning can society ensure that the technological tide lifts all boats rather than leaving a significant portion of the workforce stranded.",
+        qas: [
+          { q: "Q1. What is the central topic discussed in this passage as a whole?", a: "A1. The macroeconomic and social implications of AI and automation on the global labor market, balancing the benefits of increased task efficiency and new job creation against the threats of worker displacement, economic inequality, and the necessity of upskilling." },
+          { q: "Q2. Based on the WEF 2024 data, what conclusion can be drawn regarding the short-term impact of technology integration on corporate staffing levels?", a: "A2. It indicates a net reduction in immediate workforce sizes across surveyed businesses, as the percentage of firms planning to reduce staff (43%) outweighs those planning expansion (34%) by 9 percentage points." },
+          { q: "Q3. How do proponents counter the argument that automation inherently destroys human livelihoods?", a: "A3. They point out that technological shifts historically generate entirely new career paths—such as data analysts and software engineers—while simultaneously taking over hazardous tasks, thereby decreasing workplace injuries by over 15%." },
+          { q: "Q4. According to the Brookings Institution study, why is the projected 12% increase in the wage gap by 2030 particularly difficult to avoid without structural intervention?", a: "A4. Because the 25% of workers most vulnerable to displacement (in administration, food service, and transportation) possess non-specialized skills, making an immediate transition into newly created high-tech roles structurally impossible without corporate or state retraining." },
+          { q: "Q5. What conceptual solution does the author propose to redefine the relationship between human labor and advanced technology?", a: "A5. The author proposes \"augmented intelligence,\" a collaborative framework where human intuition and machine efficiency complement each other, rather than viewing the dynamic as a zero-sum conflict between human and machine." }
+        ]
+      },
+      {
+        text: "Climate change poses an existential threat to global stability, prompting policymakers to seek market-based solutions to curb greenhouse gas emissions. One of the most widely discussed mechanisms is carbon pricing, which charges polluters for the carbon dioxide they emit. Currently, over 70 carbon pricing initiatives are implemented worldwide, covering approximately 23% of global greenhouse gas emissions, according to the World Bank.\n\nThe primary economic argument for carbon pricing is that it internalizes environmental costs. Under a traditional market system, companies do not pay for the damage their emissions cause to public health and the environment. By establishing a price—either through a carbon tax or a cap-and-trade system—governments incentivize firms to adopt cleaner technologies. For example, since the European Union introduced its Emissions Trading System (ETS) in 2005, emissions from regulated sectors have decreased by roughly 35%, demonstrating the efficacy of financial penalties in driving corporate behavior toward sustainability.\n\nDespite these successes, carbon pricing faces intense criticism regarding its economic fairness. Opponents argue that carbon taxes are inherently regressive, meaning they place a disproportionate financial burden on low-income households. A study by the International Monetary Fund (IMF) indicated that energy costs for the poorest quintile of society can rise by up to 8% under aggressive carbon pricing if no compensatory measures are taken. Businesses also worry about international competitiveness, fearing that domestic taxes will drive companies to relocate to countries with laxer environmental regulations.\n\nTo address these concerns, many economists advocate for a \"revenue-neutral\" carbon tax. Under this framework, the revenue generated from the tax is returned directly to citizens as a dividend or used to lower income taxes. This approach protects vulnerable populations while maintaining a clear financial incentive to reduce fossil fuel consumption. As the global temperature continues to rise, refining these economic instruments will be essential for balancing ecological survival with economic vitality.",
+        qas: [
+          { q: "Q1. What is the central topic discussed in this passage as a whole?", a: "A1. The economic viability and social fairness of carbon pricing as a market-based climate solution, examining its effectiveness in internalizing ecological costs alongside its socioeconomic pitfalls and potential policy solutions like revenue-neutral taxation." },
+          { q: "Q2. What fundamental market failure is carbon pricing designed to rectify, and how does it achieve this?", a: "A2. It rectifies the failure of unpriced negative externalities, where corporations do not pay for the environmental and public health damages they cause. It achieves this by internalizing these costs, thereby financially incentivizing firms to transition to cleaner alternatives." },
+          { q: "Q3. What empirical evidence does the author provide to substantiate the economic claim that carbon pricing effectively changes corporate environmental behavior?", a: "A3. The author cites the European Union's Emissions Trading System (ETS), noting that since its inception in 2005, greenhouse gas emissions within the regulated sectors have dropped by approximately 35%." },
+          { q: "Q4. Explain the specific socio-economic paradox of an aggressive carbon tax as highlighted by the IMF study.", a: "A4. The paradox is that while intended for public good, the tax is regressive; it disproportionately harms the poorest quintile of the population by raising their baseline energy expenses by up to 8%, as lower-income households spend a larger share of their income on energy." },
+          { q: "Q5. How does the proposed \"revenue-neutral\" model theoretically resolve both the ethical and environmental objections to carbon taxation?", a: "A5. It redistributes the collected carbon tax revenue directly back to citizens as dividends or uses it to offset income taxes. This mitigates the financial strain on low-income families (solving the fairness issue) while retaining the market incentive to avoid fossil fuels (solving the environmental issue)." }
+        ]
+      },
+      {
+        text: "The COVID-19 pandemic accelerated a massive shift toward digital education, transforming online learning from a niche alternative into a mainstream academic pillar. According to data from the National Center for Education Statistics, over 60% of college students took at least one online course in recent years. While this flexibility offers unprecedented access to education, its long-term academic efficacy remains a subject of intense debate among educators.\n\nAdvocates of online learning highlight its accessibility and cost-effectiveness. Digital platforms allow students from remote or underprivileged backgrounds to access elite educational resources without the expenses of commuting or campus housing. Furthermore, a study by the Research Institute of America found that e-learning increases information retention rates by 25% to 60%, compared to traditional classroom retention rates of 8% to 10%. This is largely attributed to the ability of students to learn at their own pace, re-watching lectures and reviewing complex materials as needed.\n\nConversely, skeptics point to significant drawbacks, particularly regarding student engagement and equity. Online education requires a high degree of self-discipline, and dropout rates for online courses are estimated to be 10% to 20% higher than those of conventional classes. Moreover, the digital divide remains a critical barrier; a UNESCO report highlighted that nearly 40% of students globally lack reliable internet access or a suitable device for online learning. There are also concerns about the loss of social interaction, which is vital for developing soft skills such as teamwork and empathy.\n\nIn conclusion, online learning is a powerful tool, but it is not a flawless replacement for traditional classrooms. The future of education likely lies in a hybrid model that combines the flexibility of digital platforms with the social benefits of face-to-face instruction. To maximize its potential, educational institutions must ensure equitable technology distribution and design interactive curricula that keep digital learners engaged.",
+        qas: [
+          { q: "Q1. What is the central topic discussed in this passage as a whole?", a: "A1. The academic efficacy, socio-economic benefits, and structural limitations of online higher education, analyzing its capability for high information retention against the hurdles of the digital divide, low student engagement, and the necessity of a hybrid educational future." },
+          { q: "Q2. According to the data from the Research Institute of America, what is the psychological or operational explanation for the discrepancy in retention rates between online and traditional learning?", a: "A2. The massive gap (25%-60% for online vs. 8%-10% for traditional) is driven by the self-paced nature of digital platforms, which empowers students to autonomously control their learning speed, revisit complex segments, and re-watch recorded lectures." },
+          { q: "Q3. Identify the two distinct categories of risk—one internal/psychological and one external/structural—that critics associate with online education.", a: "A3. The internal risk is the demand for intense self-discipline, which manifests in 10% to 20% higher dropout rates. The structural risk is the digital divide, backed by the UNESCO report stating that 40% of global students lack appropriate hardware or connectivity." },
+          { q: "Q4. What critical developmental element is uniquely threatened by a purely digital academic environment, according to skeptics?", a: "A4. The acquisition of essential interpersonal \"soft skills,\" such as peer teamwork and empathy, which require spontaneous, physical, and real-time social interactions found primarily in physical classrooms." },
+          { q: "Q5. What systemic prerequisite must be achieved before educational institutions can successfully leverage the hybrid model advocated by the author?", a: "A5. Institutions and governments must achieve equitable technology distribution to close the digital divide, alongside fundamentally redesigning curricula to ensure high digital engagement rather than just broadcasting standard lectures online." }
+        ]
+      },
+      {
+        text: "In the modern business landscape, corporate success is no longer measured solely by financial profitability. Environmental, Social, and Governance (ESG) criteria have become essential benchmarks for investors evaluating corporate sustainability and ethical impact. According to a report by Bloomberg Intelligence, global ESG assets are projected to exceed $50 trillion, representing more than a third of the total projected assets under management globally.\n\nThe enthusiasm for ESG investing stems from the belief that ethical practices lead to long-term financial resilience. Companies with strong environmental policies are better prepared for strict climate regulations, reducing their risk of legal penalties. Socially responsible companies often enjoy higher employee retention and consumer loyalty. Research by Harvard Business Review indicated that firms prioritizing sustainability outperformed their peers by 4.7% in stock value over a ten-year period, suggesting that ethical behavior aligns with shareholder interests.\n\nHowever, the rapid growth of ESG investing has drawn skepticism, primarily concerning the lack of standardized metrics. Unlike traditional financial accounting, which relies on clear metrics like net profit, ESG ratings are often subjective and inconsistent. A study by the Massachusetts Institute of Technology (MIT) found that the correlation between different ratings agencies' ESG scores for the exact same company was only 0.61, compared to a 0.99 correlation for traditional credit ratings. This ambiguity allows for \"greenwashing,\" where corporations exaggerate their eco-friendly initiatives to attract investors without making meaningful changes.\n\nTo maintain credibility, the financial sector requires stricter regulatory oversight and unified global standards for ESG reporting. The International Sustainability Standards Board (ISSB) is working to establish these guidelines, aiming to provide investors with transparent, comparable data. Ultimately, ESG investing has the potential to steer corporate behavior toward a fairer and cleaner world, but only if the data behind it becomes as reliable as traditional financial metrics.",
+        qas: [
+          { q: "Q1. What is the central topic discussed in this passage as a whole?", a: "A1. The evaluation of ESG investing within modern financial markets, exploring how ethical criteria can drive corporate long-term financial resilience, while warning against the systemic threat of greenwashing caused by the subjective, non-standardized nature of current ratings metrics." },
+          { q: "Q2. Explain how the concept of ESG challenges the traditional Milton Friedman view that corporate success is exclusively tied to financial profitability.", a: "A2. ESG establishes that long-term corporate viability and shareholder returns are structurally linked to ethical parameters (environmental compliance, social responsibility, governance) which act as risk mitigators against regulatory changes and employee turnover." },
+          { q: "Q3. According to the Harvard Business Review study, what empirical correlation exists between long-term financial performance and sustainability?", a: "A3. The study found a clear positive correlation, demonstrating that corporations prioritizing sustainability achieved a 4.7% higher performance in stock evaluation over a ten-year window compared to non-sustainable peers." },
+          { q: "Q4. Interpret the significance of the 0.61 correlation coefficient discovered by MIT researchers regarding ESG evaluations.", a: "A4. The 0.61 score signifies a high degree of subjectivity and variance among rating agencies evaluating the identical corporate entity. This stands in stark contrast to the nearly uniform 0.99 correlation found in credit ratings, proving a systemic lack of standardized metrics." },
+          { q: "Q5. What corporate malpractice is directly enabled by this statistical discrepancy in ESG ratings, and what is the international community doing to mitigate it?", a: "A5. The lack of standard metrics enables \"greenwashing\" (deceptive marketing of standard corporate practices as eco-friendly). To stop this, the International Sustainability Standards Board (ISSB) is actively creating unified global standards to enforce reporting transparency." }
+        ]
+      },
+      {
+        text: "Global healthcare systems are facing unprecedented strain due to aging populations and the rising prevalence of chronic conditions such as diabetes and heart disease. Traditionally, medical care has operated on a reactive model, focusing on treating illnesses after they occur. However, health economists increasingly argue that shifting the focus toward preventative healthcare is essential for both public well-being and fiscal sustainability.\n\nThe primary benefit of preventative healthcare is its potential to drastically reduce medical expenditures. According to the Centers for Disease Control and Prevention (CDC), chronic diseases account for roughly 90% of total healthcare expenditures in developed nations. Simple preventative measures, such as routine vaccinations, regular screenings, and public fitness programs, can avert these costly conditions. For instance, studies show that every dollar invested in childhood immunization saves society approximately $10 in direct medical costs, demonstrating the high return on investment of early intervention.\n\nDespite these clear advantages, funding for preventative healthcare remains disproportionately low. Globally, governments allocate less than 5% of their total healthcare budgets to prevention, with the vast majority of resources directed toward emergency care and advanced treatments. This imbalance is driven by political and corporate incentives; the immediate results of a new surgical procedure are highly visible, whereas the long-term benefits of a healthy lifestyle program take decades to manifest. Furthermore, pharmaceutical companies often generate higher profits from treating long-term chronic illnesses than from preventing them.\n\nOvercoming these barriers requires an overhaul of healthcare infrastructure and policy. Governments must incentivize medical providers to focus on patient outcomes rather than the volume of services rendered. Public campaigns promoting nutrition, stress reduction, and physical activity must be treated as essential infrastructure investments rather than optional welfare programs. By prioritizing prevention, societies can create a more sustainable healthcare framework that enhances quality of life while reducing economic burdens.",
+        qas: [
+          { q: "Q1. What is the central topic discussed in this passage as a whole?", a: "A1. The macroeconomic necessity of transitioning healthcare models from reactive crisis-management to proactive preventative medicine, analyzing the immense fiscal returns of prevention against the political and corporate incentives that perpetuate current low funding levels." },
+          { q: "Q2. Detail the macroeconomic fiscal crisis currently threatening developed health systems, utilizing the statistics provided by the CDC.", a: "A2. Developed health systems are facing a major fiscal crisis driven by aging demographics and chronic illnesses, which consume an overwhelming 90% of all medical expenditures, rendering the traditional reactive medical model financially unsustainable." },
+          { q: "Q3. Based on the childhood immunization data, evaluate the mathematical efficiency of preventative healthcare investments.", a: "A3. The investment yields a staggering 1,000% return (a 1:10 ratio), where a localized single-dollar layout on early vaccination directly eliminates ten dollars of subsequent reactive medical treatment costs for society." },
+          { q: "Q4. What specific structural and systemic conflicts of interest prevent state budgets from shifting capital into the highly efficient preventative sector?", a: "A4. Perceived visibility: politicians prioritize highly visible, short-term acute treatments over preventative measures that take decades to yield data. Second, corporate pharmaceutical profits are inherently aligned with prolonged, billable chronic disease management rather than permanent eradication." },
+          { q: "Q5. What fundamental shift in billing and performance metrics does the author recommend to restructure corporate medical behavior?", a: "A5. The author outlines a transition away from a fee-for-service model (volume of services rendered) toward an outcome-based incentive model, legally rewarding healthcare providers for the actual sustained health outcomes of their patients." }
+        ]
+      },
+      {
+        text: "For decades, globalization drove corporations to establish highly efficient, lean supply chains, often concentrating production in countries with low labor costs. However, recent geopolitical tensions, trade disputes, and unexpected global disruptions have exposed the extreme vulnerability of this model. Today, multinational corporations are shifting their strategies from \"just-in-time\" manufacturing to \"just-in-case\" resilience, restructuring global trade routes.\n\nThe conventional supply chain prioritized cost minimization above all else, leading to heavy dependence on a few manufacturing hubs. According to data from the United Nations Conference on Trade and Development (UNCTAD), a single country often accounts for over 50% of the global output for critical components like semiconductors and pharmaceutical ingredients. When lockdowns or political conflicts halt production in these hubs, global industries paralyze. The automotive sector, for example, lost an estimated $210 billion in revenue due to microchip shortages caused by supply disruptions.\n\nTo mitigate these risks, businesses are adopting strategies known as \"nearshoring\" and \"friendshoring.\" Nearshoring involves moving production facilities closer to the target market, while friendshoring restricts trade to nations with shared political values. A survey by McKinsey & Company revealed that 92% of supply chain executives plan to increase resilience through diversification and regionalization. While these shifts increase initial operational costs, they provide a vital buffer against future disruptions, ensuring that companies can maintain steady delivery schedules.\n\nHowever, this fragmentation of global trade comes with economic consequences. Economists warn that moving away from optimal global division of labor could lead to permanent inflation, as consumer goods become more expensive to produce domestically or regionally. A report by the World Trade Organization (WTO) estimated that dividing the world into rival trading blocs could decrease global GDP by up to 5%. Businesses and policymakers must navigate this delicate balance, securing critical supply chains without triggering protectionism.",
+        qas: [
+          { q: "Q1. What is the central topic discussed in this passage as a whole?", a: "A1. The dynamic restructuring of global logistics and supply chains under the pressure of geopolitical conflicts, analyzing the tactical shift from hyper-lean \"just-in-time\" hubs to localized, resilient alternatives like nearshoring, alongside the macroeconomic risks of regional fragmentation." },
+          { q: "Q2. Contrast the operational philosophies of \"just-in-time\" and \"just-in-case\" supply chain strategies in the context of global economics.", a: "A2. \"Just-in-time\" focuses strictly on extreme cost minimization and lean inventory, relying on hyper-localized high-efficiency hubs. \"Just-in-case\" sacrifices initial cost efficiency for security, prioritizing regional diversification to buffer against geopolitical and systemic shocks." },
+          { q: "Q3. Using the UNCTAD data, evaluate how extreme geographic concentration creates a domino effect across unrelated sectors, like automotive manufacturing.", a: "A3. Because single nations control over 50% of vital microchip production, a localized halt in that region halts the entire global supply chain. This specific semiconductor chokepoint starved the automotive sector of vital components, resulting in a massive $210 billion loss." },
+          { q: "Q4. Differentiate between the concepts of \"nearshoring\" and \"friendshoring\" as strategic responses to geopolitical friction.", a: "A4. Nearshoring is geographically driven, focusing on physical proximity to the home market to cut transport risks. Friendshoring is ideologically driven, restricting corporate trade nodes exclusively to nations that share identical political values, regardless of distance." },
+          { q: "Q5. What severe macroeconomic downside risks do the WTO and other economists project if global trade completely fragments into protectionist regional blocs?", a: "A5. Fragmentation disrupts the optimal international division of labor, causing permanent global consumer inflation due to higher localized production costs, and could slash total global GDP by up to 5%." }
+        ]
+      },
+      {
+        text: "As urban populations continue to swell, cities worldwide are facing severe challenges related to traffic congestion, waste management, and energy consumption. According to the United Nations, nearly 68% of the world's population will live in urban areas by 2050. To accommodate this massive influx, urban planners are turning to the concept of \"smart cities,\" utilizing Internet of Things (IoT) technology and data analytics to optimize urban living.\n\nThe integration of smart technology can significantly improve resource efficiency and public services. By installing sensors in traffic lights and roads, cities can monitor traffic flow in real-time and automatically adjust signals to reduce congestion. In Barcelona, the implementation of smart traffic management and automated waste collection systems reduced municipal energy use by 30% and saved the city over $80 million annually. Additionally, smart grids allow for better distribution of renewable energy, matching power supply with fluctuating demand patterns across residential and commercial zones.\n\nHowever, the transformation into a smart city introduces profound concerns regarding digital privacy and data security. To function effectively, these cities must continuously collect vast amounts of data from citizens, tracking everything from public transit usage to facial recognition at security checkpoints. Privacy advocates argue that without strict regulations, this surveillance infrastructure could lead to unprecedented government intrusion or corporate exploitation. A report by the Cybersecurity Coalition noted that IoT devices are highly vulnerable to hacking, posing a risk of cyberattacks on critical infrastructure like water supplies or power grids.\n\nFor smart cities to be viable and accepted by the public, technological advancement must coexist with robust privacy protections and transparent data governance. Municipalities must ensure that data is anonymized and securely stored, giving citizens control over their personal information. Furthermore, urban planners must avoid creating a digital divide, ensuring that smart infrastructure benefits all neighborhoods rather than just affluent areas. Technology should ultimately serve as a tool to enhance community well-being, not just operational control.",
+        qas: [
+          { q: "Q1. What is the central topic discussed in this passage as a whole?", a: "A1. The paradigm of smart cities as an urban planning response to rapid global population centralization, weighing the major environmental and financial efficiencies achieved through IoT deployment against the profound modern risks of mass digital surveillance and cyber vulnerability." },
+          { q: "Q2. According to the United Nations projection, what structural reality is forcing urban centers to adopt IoT infrastructure?", a: "A2. The reality that by 2050, 68% of the global population will be heavily concentrated in urban zones, making manual, legacy management of waste, traffic, and energy logistically impossible without automated optimization." },
+          { q: "Q3. Analyze the empirical data from Barcelona to explain the dual economic and ecological benefits of smart city deployment.", a: "A3. Barcelona proves that IoT integration yields simultaneous ecological and financial returns: it lowered municipal energy consumption by 30% (ecological) while yielding direct administrative cost savings of $80 million annually (economic)." },
+          { q: "Q4. Explain the technical vulnerability and the civic risk highlighted by critics regarding the constant data harvesting required by smart grids and sensors.", a: "A4. The technical vulnerability is that IoT nodes are highly susceptible to malicious hacks, threatening core infrastructure like water and power. The civic risk is that non-regulated data collection creates an omniscient surveillance apparatus prone to state intrusion and corporate exploitation." },
+          { q: "Q5. Beyond data encryption, what socioeconomic mandate does the author place on future urban planners to prevent class-based infrastructure disparities?", a: "A5. Planners must intentionally deploy infrastructure equitably across all demographic sectors, ensuring that technological advancements serve the entire community rather than creating a digital divide that exclusively advantages affluent neighborhoods." }
+        ]
+      },
+      {
+        text: "Many developed and developing nations are currently experiencing an unprecedented demographic shift: a sharp decline in fertility rates. According to data from the World Bank, the global fertility rate has fallen from approximately 5.0 births per woman in 1960 to below 2.3 today, with many East Asian and European nations dropping far below the replacement level of 2.1. This trend has profound social and economic consequences for the future.\n\nThe primary economic concern of a shrinking population is the distortion of the dependency ratio—the proportion of dependents to the working-age population. As the number of young people entering the workforce decreases, the elderly population expands rapidly due to increased life expectancy. In Japan, for example, citizens aged 65 and older comprise nearly 30% of the total population. This imbalance places an immense fiscal burden on public pension and healthcare systems, as fewer tax-paying workers are available to support a growing pool of retirees, threatening fiscal stability.\n\nSociologists attribute this decline to various modern shifts, including increased female education, urbanization, and rising economic pressures. In many societies, the high cost of housing and childcare makes raising a family financially daunting. A survey conducted in South Korea revealed that over 70% of young adults cite financial insecurity and career interruption as their primary reasons for delaying or foregoing marriage and children. Furthermore, traditional workplace cultures that demand long working hours make balancing career and family life exceptionally difficult.\n\nTo counter this demographic crisis, governments are experimenting with diverse policy measures. Some nations offer substantial financial incentives, subsidized childcare, and extended parental leave to encourage childbearing. Others rely heavily on immigration to replenish their shrinking workforces and sustain economic productivity. However, long-term solutions require structural changes, such as reforming rigid work cultures and lowering the cost of living. Addressing the declining birth rate is essential for maintaining economic growth and preserving social welfare structures.",
+        qas: [
+          { q: "Q1. What is the central topic discussed in this passage as a whole?", a: "A1. The critical demographic crisis of dropping global birth rates, evaluating how inverted dependency ratios undermine public financial safety nets, the underlying societal root causes (economic strain and grueling workplace rules), and the limits of policy remedies." },
+          { q: "Q2. Explain the structural significance of the '2.1' statistical threshold mentioned in the text regarding population dynamics.", a: "A2. The 2.1 figure represents the replacement level fertility rate, which is the mathematically required baseline number of births per woman needed to keep a nation's population size stable across generations without relying on external immigration." },
+          { q: "Q3. Using Japan as an empirical case study, analyze how the distortion of the dependency ratio threatens a state's internal fiscal architecture.", a: "A3. With nearly 30% of its population aged 65+, Japan faces an inverted demographic pyramid. This severely strains public pension and medical architectures because the taxable, wealth-generating younger cohort shrinks while the non-working, high-cost retiree pool rapidly expands." },
+          { q: "Q4. Based on the South Korean survey, synthesize the two core socio-economic deterrents preventing the younger generation from participating in family formation.", a: "A4. The deterrents are acute financial insecurity (such as high housing and childcare costs) and the high opportunity cost of career interruption, both of which are exacerbated by corporate cultures that demand extreme working hours." },
+          { q: "Q5. Contrast the short-term remedial strategy of immigration with the long-term structural remedies proposed by the author to stabilize declining populations.", a: "A5. Immigration serves as an immediate, external workforce replenishment mechanism to maintain economic productivity. In contrast, the author's long-term structural remedies seek to fix internal systemic root causes by lowering the macroeconomic cost of living and fundamentally transforming rigid corporate workplace balance." }
+        ]
+      },
+      {
+        text: "Traditional economic models assume that human beings are rational actors who always make optimal decisions to maximize their personal well-being. However, behavioral economists have demonstrated that humans are frequently irrational, influenced by cognitive biases, emotions, and peer pressure. To guide people toward better choices without restricting their freedom, governments and organizations increasingly employ \"nudge theory,\" a concept developed by Nobel laureate Richard Thaler.\n\nA \"nudge\" is a subtle alteration in the environment that predictably changes people's behavior without forbidding any options or altering economic incentives. A classic application is the default option in retirement savings plans. When companies automatically enroll employees into savings plans while allowing them to opt out, participation rates skyrocket. According to research published in the Quarterly Journal of Economics, automatic enrollment increased savings plan participation among new employees from roughly 40% to over 85%, significantly enhancing long-term financial security.\n\nNudges have also proven highly effective in public health and environmental protection. For example, placing healthier food options at eye level in school cafeterias has been shown to increase fruit and vegetable consumption by up to 30%. Similarly, providing households with feedback comparing their energy usage to that of their neighbors encourages conservation through social proof, reducing overall electricity consumption by 2% to 3% in target communities. These low-cost interventions achieve public policy goals efficiently.\n\nHowever, nudge theory is not without ethical criticism. Some philosophers and political scientists argue that manipulating choice architecture borders on psychological paternalism, undermining individual autonomy. Critics worry that governments could use nudges covertly to promote agendas that citizens might otherwise reject if presented transparently. Therefore, to maintain public trust, the application of nudge theory must remain entirely transparent, and the options provided must genuinely serve the best interests of the public rather than corporate or political entities.",
+        qas: [
+          { q: "Q1. What is the central topic discussed in this passage as a whole?", a: "A1. The application of Nudge Theory in behavioral economics as a tool for public policymaking, demonstrating how subtle adjustments to environmental choice architecture can effectively direct civic behavior while raising critical ethical questions about cognitive paternalism and individual autonomy." },
+          { q: "Q2. How does the fundamental premise of behavioral economics diverge from classical macroeconomic theory regarding human behavior?", a: "A2. Classical theory models humans as perfectly rational utility maximizers. Behavioral economics recognizes that humans possess bounded rationality and are routinely governed by subconscious cognitive biases, emotions, and external social pressures." },
+          { q: "Q3. Analyze the quantitative shift in consumer behavior achieved by altering the 'choice architecture' of corporate retirement plans.", a: "A3. By changing the default setting to automatic enrollment (an alteration of choice architecture), participation surged from a minority of 40% to an overwhelming majority of over 85%, proving that inertia can be converted into long-term financial asset accumulation." },
+          { q: "Q4. Using the environmental example, explain the psychological mechanism that allows comparative utility data to reduce residential energy consumption by 2% to 3%.", a: "A4. The mechanism is social proof (or peer comparison). Providing metrics that contrast a household's consumption directly against neighbors triggers a subconscious desire to conform to community standards, inducing conservation without financial penalties." },
+          { q: "Q5. Formulate the ethical dilemma inherent in 'choice architecture,' and state the regulatory condition required to protect citizen autonomy.", a: "A5. The dilemma is that manipulating environments borders on psychological paternalism, potentially allowing states to covertly engineer public compliance. To protect autonomy, all nudges must be completely transparent and explicitly designed to maximize the citizens' true welfare rather than institutional utility." }
+        ]
+      },
+      {
+        text: "The rise of private cryptocurrencies and digital payment platforms has compelled central banks worldwide to rethink the nature of sovereign money. In response, many nations are researching or developing Central Bank Digital Currencies (CBDCs), which are digital forms of a country's fiat currency. According to the Atlantic Council's CBDC tracker, over 100 countries, representing more than 95% of global GDP, are currently exploring a digital currency.\n\nProponents of CBDCs argue that they offer substantial advantages over traditional physical cash and commercial bank electronic payments. First, CBDCs can drastically improve the efficiency of payment systems, reducing transaction costs for both domestic and cross-border transfers. A report by the Bank for International Settlements (BIS) noted that international transfers can take days and incur high fees, whereas a CBDC network could settle transactions almost instantly at a fraction of the cost. Additionally, CBDCs can foster financial inclusion by allowing unbanked populations to access secure digital financial services directly through a mobile phone.\n\nDespite these potential benefits, the introduction of CBDCs introduces significant challenges, particularly regarding privacy and commercial banking stability. Unlike cash, which is completely anonymous, a digital currency ledger could allow governments to monitor every transaction made by citizens. This raises severe civil liberty concerns regarding state surveillance and financial control. Furthermore, if citizens can hold funds directly with a central bank, they might withdraw their deposits from commercial banks during a financial crisis, destabilizing the traditional banking sector.\n\nAs central banks navigate these complex issues, the design of CBDCs must balance innovation with privacy. Most institutions are considering a two-tiered system, where commercial banks handle customer accounts while the central bank manages the underlying digital infrastructure. By implementing strong encryption and clear legal frameworks, governments can safeguard user privacy while building a modern financial system.",
+        qas: [
+          { q: "Q1. What is the central topic discussed in this passage as a whole?", a: "A1. The macroeconomic transformation toward Central Bank Digital Currencies (CBDCs) as a response to private digital assets, examining its advantages in payment efficiency and inclusion against critical risks like the destruction of commercial bank liquidity and totalitarian state surveillance." },
+          { q: "Q2. According to the Atlantic Council data, evaluate the geopolitical scale and systemic relevance of the current transition toward CBDCs.", a: "A2. The movement is globally dominant and highly relevant, as demonstrated by the fact that over 100 sovereign states representing a massive 95% of the total global GDP are actively researching or executing digital currency frameworks." },
+          { q: "Q3. Detail the two specific macroeconomic improvements that a centralized ledger provides over traditional cross-border commercial bank transfers according to the BIS.", a: "A3. It vastly accelerates clearing times, compressing transactions that traditionally took days into near-instant settlements, while simultaneously dropping friction costs to a fraction of legacy international commercial banking fees." },
+          { q: "Q4. Reconstruct the systemic threat that a CBDC poses to the stability of the private commercial banking sector during an acute economic panic.", a: "A4. Because a CBDC provides a direct account link to the sovereign central bank, panic-stricken citizens might execute instantaneous digital bank runs, transferring capital out of private commercial entities into the zero-risk central bank, crashing the private sector's liquidity." },
+          { q: "Q5. How does the proposed 'two-tiered system' functionally isolate the central bank from direct surveillance capabilities while preserving technological modernization?", a: "A5. It maintains commercial banks as the customer-facing interface to insulate individual ledger data, while restricting the central bank strictly to the wholesale digital infrastructure management layer, balancing technological speed with privacy safeguards." }
+        ]
+      },
+      {
+        text: "The global shift toward remote work has completely transformed corporate culture and office management. What began as a temporary safety measure during a health crisis has evolved into a permanent operational model. According to a comprehensive study by Stanford University, approximately 30% of paid workdays in the United States are now performed from home, a permanent shift that has forced executives to reconsider traditional workplace structures.\n\nAdvocates of remote and hybrid work models emphasize substantial improvements in employee well-being and corporate cost savings. By eliminating stressful daily commutes, workers save valuable time and money, leading to a better work-life balance. The Stanford study found that hybrid workers—those splitting time between the office and home—reported a 15% increase in job satisfaction and a significant reduction in quit rates. For corporations, reducing physical office space lowers overhead costs, such as rent and utilities, while allowing companies to recruit talent globally.\n\nHowever, corporate leaders also express serious concerns regarding productivity, collaboration, and organizational culture. Managing remote teams requires digital communication tools that can sometimes stifle spontaneous creativity and casual mentorship. A report by Microsoft indicated that while individual productivity can remain high during remote work, corporate silos strengthen, and cross-departmental collaboration drops by nearly 25%. There are also concerns about \"proximity bias,\" where managers inadvertently favor employees who work physically in the office over remote colleagues for promotions.\n\nTo succeed in this new era, companies must adopt deliberate management practices rather than relying on outdated metrics. Evaluating performance based on actual output and objectives achieved, rather than physical visibility, is essential. Hybrid structures should be carefully coordinated, ensuring that office days are dedicated to collaborative tasks while remote days are reserved for focused, individual work. The future belongs to organizations that can blend flexibility with cohesion.",
+        qas: [
+          { q: "Q1. What is the central topic discussed in this passage as a whole?", a: "A1. The institutional shift toward hybrid and remote work structures within modern corporate operations, contrasting corporate real-estate savings and employee retention gains against the degradation of cross-departmental collaboration, proximity bias, and the requirement for objective output metrics." },
+          { q: "Q2. Analyze the dual corporate benefits—financial and human capital related—that the Stanford study links to the hybrid operational model.", a: "A2. Financed-wise, it reduces corporate overhead via lower physical real estate rental and utility outlays. Human capital-wise, it expands recruitment reach globally while increasing internal job satisfaction by 15% and minimizing employee quit rates." },
+          { q: "Q3. According to the Microsoft empirical data, what structural damage occurs to an organization's internal network cohesion when physical offices are abandoned?", a: "A3. Internal organizational silos become rigidly reinforced, which severely damages cross-departmental collaboration, resulting in a quantified 25% drop in spontaneous, inter-departmental creative integration." },
+          { q: "Q4. Define the psychological corporate hazard known as 'proximity bias' and describe its impact on career advancement.", a: "A4. Proximity bias is a manager's subconscious cognitive favoritism toward physically visible employees. It distorts career advancement by rewarding presence over actual output, unfairly penalizing high-performing remote staff." },
+          { q: "Q5. Reconstruct the optimal scheduling methodology suggested by the author to maximize hybrid operational efficiency.", a: "A5. The author suggests explicit synchronization: dedicating mandatory physical office days entirely to interpersonal collaboration, group brainstorming, and mentorship, while isolating remote home days strictly for individual, high-concentration cognitive tasks." }
+        ]
+      },
+      {
+        text: "As technological displacement and economic inequality intensify, policymakers are evaluating radical social welfare reforms. One of the most controversial proposals is Universal Basic Income (UBI), a policy framework where the government provides every citizen with a regular, unconditional sum of money, regardless of their employment status or income level. While praised for its simplicity, UBI faces intense scrutiny regarding its fiscal sustainability.\n\nSupporters argue that UBI provides an essential safety net in an increasingly volatile economy dominated by gig work and automation. Unlike traditional welfare programs, which feature complex bureaucratic requirements, UBI is simple to administer and carries no stigma. Proponents point to pilot programs, such as those conducted in Finland and various municipal trials in California, which demonstrated that recipients experienced lower stress levels and improved physical health. Crucially, data showed that UBI did not cause people to stop working; instead, it allowed them to pursue education or seek better employment.\n\nConversely, critics raise substantial concerns regarding the astronomical cost and potential inflationary impacts of a nationwide UBI. Opponents estimate that providing a modest annual income to every adult would cost trillions of dollars annually, requiring massive increases in income or consumption taxes. A study by the Tax Foundation suggested that funding a UBI through increased taxation could distort economic incentives, reducing overall productivity and labor supply by up to 5%. There are also fears that guaranteed cash could drive up the prices of essential goods, neutralizing the purchasing power gained.\n\nGiven these financial challenges, some economists advocate for targeted alternatives, such as a Guaranteed Minimum Income or an expanded Earned Income Tax Credit (EITC), which direct funds exclusively to low-income individuals. As automation continues to transform the labor market, finding an effective way to distribute wealth and support displaced workers remains one of the defining policy challenges of the modern era.",
+        qas: [
+          { q: "Q1. What is the central topic discussed in this passage as a whole?", a: "A1. The socio-economic evaluation of Universal Basic Income (UBI) as a policy safety net against automated displacement, analyzing its administrative simplicity and physical welfare outcomes against macro-fiscal sustainability threats, labor market distortion, and more targeted targeted tax alternatives." },
+          { q: "Q2. Synthesize the two core structural operational advantages that UBI offers over traditional, legacy means-tested social safety nets.", a: "A2. UBI eliminates expensive, complex bureaucratic administrative oversight because it is completely unconditional, and it simultaneously eliminates the psychological social stigma associated with receiving targeted poverty welfare." },
+          { q: "Q3. How did empirical evidence from the Finnish and Californian pilot programs counter the prominent conservative theory that unconditional cash handouts destroy the human incentive to work?", a: "A3. The data explicitly demonstrated that recipients did not exit the workforce; instead, the financial baseline allowed them the security to pursue upskilling, acquire further education, or transition dynamically into structurally superior employment." },
+          { q: "Q4. Detail the specific macroeconomic warning formulated by the Tax Foundation study regarding a tax-funded nationwide UBI scenario.", a: "A4. The study warned that the massive tax increases required to fund a nationwide UBI would distort broader economic incentives, resulting in an aggregate 5% shrinkage in both the national labor supply and overall industrial productivity." },
+          { q: "Q5. Contrast the absolute philosophical foundation of UBI with the targeted economic approaches like the Earned Income Tax Credit (EITC).", a: "A5. UBI is anchored on absolute universality, distributing capital to every citizen irrespective of wealth or productivity. In contrast, the EITC is functionally dependent on employment and explicitly targeted, filtering resources exclusively to low-income working individuals." }
+        ]
+      },
+      {
+        text: "The global transition toward renewable energy is accelerating rapidly as nations strive to meet net-zero carbon emissions targets. According to the International Energy Agency (IEA), renewable sources are projected to account for over 90% of global electricity expansion. However, the inherent intermittency of wind and solar power—the fact that the sun does not always shine and the wind does not always blow—presents a major hurdle for grid stability.\n\nThe core challenge of a renewable-reliant power grid is the mismatch between energy generation and consumer demand. Solar farms generate peak electricity during the afternoon, whereas electricity consumption typically surges in the evening. To prevent blackouts, grids require advanced energy storage systems that can store excess power and discharge it when needed. Currently, lithium-ion batteries dominate the market, with global storage capacity growing by over 60% annually. These batteries respond instantly to grid fluctuations, stabilizing the power supply.\n\nHowever, relying entirely on lithium-ion technology introduces environmental and geopolitical risks. The extraction of raw materials like lithium, cobalt, and nickel requires intensive mining operations that often cause severe ecological degradation and water scarcity in developing regions. Furthermore, a report by the Center for Strategic and International Studies (CSIS) highlighted that supply chains for these minerals are highly concentrated, exposing nations to political vulnerabilities. Additionally, lithium-ion batteries degrade over time, creating a massive electronic waste challenge if recycling infrastructure is not scaled up.\n\nTo achieve a sustainable energy future, scientists are developing alternative storage technologies, such as solid-state batteries, hydrogen fuel cells, and pumped-storage hydropower. Solid-state options offer higher energy density and improved safety, while green hydrogen can store energy for months, addressing seasonal supply variations. Diversifying storage technologies will ensure that the clean energy transition is resilient, ecologically responsible, and capable of powering modern civilization reliably.",
+        qas: [
+          { q: "Q1. What is the central topic discussed in this passage as a whole?", a: "A1. The critical engineering and geopolitical bottleneck of energy storage infrastructure within the clean energy transition, reviewing the limits, concentrated mineral dependency, and electronic waste liabilities of dominant lithium-ion platforms alongside the development of next-generation chemical alternatives." },
+          { q: "Q2. Using the IEA data and the concept of 'intermittency,' explain the structural temporal paradox facing modern solar-reliant electrical grids.", a: "A2. The paradox is the severe supply-demand temporal mismatch: solar arrays achieve peak thermodynamic output during high noon when corporate/residential demand is low, yet consumer demand spikes in the evening when the solar array output drops to zero." },
+          { q: "Q3. Based on the CSIS report, what non-ecological, strategic vulnerability does a complete reliance on standard lithium-ion infrastructure impose on importing states?", a: "A3. It imposes acute geopolitical vulnerabilities, as the global supply chains and refining nodes for critical minerals (lithium, cobalt, nickel) are heavily concentrated within a few dominant nations, leaving importing states exposed to political leverage and sudden embargoes." },
+          { q: "Q4. What long-term structural end-of-life challenge does the rapid 60% annualized growth of lithium battery arrays pose to global waste frameworks?", a: "A4. It creates an exponential accumulation of toxic electronic waste, as chemical lithium batteries naturally degrade over time, threatening global ecosystems if recycling infrastructure is not dramatically industrialized." },
+          { q: "Q5. Contrast the operational advantages of green hydrogen storage systems against the limitations of standard battery arrays regarding long-term energy reserves.", a: "A5. Chemical batteries are constrained to short-term, immediate grid stabilization. In contrast, green hydrogen provides long-duration capacity, allowing energy to be securely stored for months to offset major seasonal weather variations." }
+        ]
+      },
+      {
+        text: "Higher education has long been viewed as the primary engine of social mobility and economic advancement. However, over the past few decades, the cost of attending university has escalated dramatically, outpacing inflation and wage growth. According to data from the College Board, the average tuition at private non-profit universities has increased by over 150% since the late 20th century, saddling generations of students with unprecedented financial debt.\n\nThe economic consequences of this student debt crisis are profound, affecting broad consumer spending and wealth accumulation. In the United States alone, total student loan debt exceeds $1.7 trillion, impacting roughly 45 million borrowers. A study by the Federal Reserve indicated that every $1,000 increase in student loan debt correlates with a 1% to 2% drop in homeownership rates among young adults, as graduates delay buying homes or starting businesses due to their financial obligations. This financial burden delays traditional milestones and suppresses entrepreneurial activity.\n\nEconomists attribute this relentless cost inflation to several factors, including reduced state funding for public universities and an administrative boom. To attract students in a competitive market, institutions have invested heavily in luxurious campus amenities, advanced athletic facilities, and expanding administrative personnel, driving up operational overhead. Furthermore, some critics argue that the widespread availability of federal student loans has inadvertently allowed universities to raise tuition fees continually without facing market pressure to lower costs.\n\nAddressing this crisis requires structural reform in how higher education is funded and delivered. Policymakers are exploring tuition caps, expanded vocational training alternatives, and increased funding for public institutions. Additionally, the rise of affordable digital credentials and online degrees offers a viable path to skill acquisition without the immense financial burden. Reforming the financial model of higher education is essential for ensuring that future generations can access opportunity equitably.",
+        qas: [
+          { q: "Q1. What is the central topic discussed in this passage as a whole?", a: "A1. The macroeconomic crisis of hyper-inflating higher education costs and its resulting $1.7 trillion debt burden on young adults, evaluating the causal drivers (the administrative boom and government credit insulation) alongside structural remedies like digital credentials." },
+          { q: "Q2. Synthesize the empirical data provided by the Federal Reserve to explain how student debt creates a macroeconomic drag on the housing sector.", a: "A2. The Federal Reserve data proves that student debt systematically suppresses homeownership; every modest $1,000 increment of debt causes a highly correlated 1% to 2% structural contraction in young adult home purchases, delaying broader national wealth accumulation." },
+          { q: "Q3. Explain the economic paradox regarding federal student loans—how an initiative intended to assist student access inadvertently worsens cost inflation.", a: "A3. The widespread, guaranteed availability of federal loans insulates universities from standard free-market pressures. Knowing students have open credit lines, institutions continually hike tuition fees without fear of reducing applicant numbers, driving up inflation." },
+          { q: "Q4. Identify the structural drivers of internal corporate overhead within universities that have accelerated tuition costs by 150%.", a: "A4. The internal cost drivers include a massive administrative personnel expansion (the administrative boom) and significant, non-academic capital layouts on luxury campus amenities and elite athletic facilities designed for student recruitment competition." },
+          { q: "Q5. What modern technological disruption does the author point to as a potential market corrector to bypass traditional university pricing structures entirely?", a: "A5. The author points to affordable digital credentials and structured online degrees, which decouple skill acquisition from elite physical campus overhead, offering a highly economical, democratized alternative to corporate employers." }
+        ]
+      },
+      {
+        text: "The rapid advancement of generative artificial intelligence has made it incredibly easy to create highly convincing, manipulated media known as \"deepfakes.\" By using sophisticated machine learning algorithms, deepfake software can clone a person's voice or superimpose their face onto another body with shocking realism. While this technology holds creative potential for the entertainment industry, its proliferation poses a severe threat to democratic processes and societal trust.\n\nThe primary concern regarding deepfakes is their potential to supercharge digital misinformation campaigns, particularly during political elections. According to a report by the Brookings Institution, the number of deepfake videos online is growing exponentially, doubling every six months. Malicious actors can fabricate videos of political leaders making inflammatory statements, inciting public panic or manipulating financial markets before the fraud can be detected. In an era where information spreads rapidly across social media, the old adage \"seeing is believing\" is no longer valid.\n\nBeyond politics, deepfakes pose serious risks to corporate security and individual privacy. Cybercriminals increasingly use synthesized voices to conduct advanced phishing attacks, impersonating corporate executives to authorize fraudulent wire transfers. A cybersecurity study revealed that voice-cloning scams targeting businesses have risen by over 30% recently, costing corporations millions of dollars. For individuals, the non-consensual creation of explicit media or reputational damage presents a devastating psychological and legal challenge.\n\nCombating the threat of deepfakes requires a multi-layered approach involving technological innovation, platform regulation, and media literacy. Tech companies must develop advanced detection tools using AI to identify synthetic media instantly. Additionally, social media platforms must enforce strict policies to flag or remove harmful deepfakes quickly. Ultimately, educating the public to verify sources and remain skeptical of unverified digital content is the most resilient defense against digital deception.",
+        qas: [
+          { q: "Q1. What is the central topic discussed in this passage as a whole?", a: "A1. The proliferation of AI-generated deepfakes as a systemic threat to democratic stability, market integrity, corporate security, and civic privacy, presenting the requirement for a unified defense strategy built on algorithmic detection, social platform laws, and user literacy." },
+          { q: "Q2. Based on the Brookings Institution statistic, detail the mathematical expansion curve of deepfake content on the internet.", a: "A2. The expansion curve is strictly exponential; the aggregate volume of malicious synthetic media circulating on digital channels compounds by 100% (doubles) every six sequential months." },
+          { q: "Q3. Analyze the operational mechanism and financial damage of the corporate security threat enabled by AI voice synthesis.", a: "A2. Cybercriminals deploy highly realistic AI voice clones to mimic corporate executives in targeted phishing operations. This allows them to bypass security protocols and trick employees into authorizing fraudulent wire transfers, a vector that has expanded by 30% and cost millions." },
+          { q: "Q4. Why does the rapid acceleration of generative AI fundamentally destroy the epistemological validity of classic visual evidence in the public sphere?", a: "A4. Because deepfakes achieve absolute visual and auditory realism, making it impossible to differentiate authentic captures from synthesized fabrications, rendering the legacy standard of \"seeing is believing\" completely obsolete." },
+          { q: "Q5. Outline the three distinct defensive pillars that the author states must be deployed simultaneously to neutralize digital misinformation.", a: "A5. The three pillars are: 1) Technological innovation (AI-driven active detection systems), 2) Platform regulation (strict corporate removal and flagging policies on social channels), and 3) Mass media literacy (cultivating proactive public skepticism)." }
+        ]
+      },
+      {
+        text: "The discovery of antibiotics in the 20th century revolutionized modern medicine, turning once-fatal infections into easily treatable conditions and extending human life expectancy globally. However, decades of widespread misuse and overprescription have accelerated a dangerous biological counter-trend: antimicrobial resistance (AMR). Today, bacteria are evolving faster than scientists can develop new drugs, presenting a major threat to global public health security.\n\nAccording to a comprehensive study published in *The Lancet*, antimicrobial resistance is directly responsible for an estimated 1.27 million deaths globally each year, a figure projected to rise dramatically. Common medical procedures, such as routine surgeries, cancer chemotherapy, and organ transplants, rely heavily on effective antibiotics to prevent lethal infections. If current trends continue unchecked, simple infections could become untreatable, potentially reverting medicine back to the pre-antibiotic era by 2050 and causing severe economic damage.\n\nThe primary driver of AMR is the inappropriate use of antibiotics in both human medicine and agriculture. In many regions, antibiotics are easily purchased without a prescription, leading to improper self-medication for viral infections like the flu, against which antibiotics are completely ineffective. Furthermore, data from the World Health Organization (WHO) reveals that roughly 70% of medically important antibiotics are administered to healthy livestock to promote growth and prevent disease in crowded farming conditions, allowing resistant bacteria to enter the human food chain.\n\nAddressing this global health crisis requires strict regulations on antibiotic stewardship and increased financial investment in pharmaceutical research. Because antibiotics are taken for short durations, they are less profitable for pharmaceutical companies compared to chronic disease medications, leading to a market failure where few new antibiotics are developed. Governments must provide financial incentives and public research grants to stimulate drug discovery while enforcing strict bans on agricultural antibiotic misuse.",
+        qas: [
+          { q: "Q1. What is the central topic discussed in this passage as a whole?", a: "A1. The critical threat of antimicrobial resistance (AMR) to global healthcare safety, tracing its behavioral drivers in medicine and commercial livestock farming, explaining the corporate market failure in antibiotic R&D, and demanding state intervention." },
+          { q: "Q2. According to the data published in The Lancet, why is AMR considered a systemic threat to the entire field of modern operative surgery and oncology?", a: "A2. Operative surgeries, transplants, and chemotherapy are structurally dependent on a sterile corporate/medical environment protected by functioning antibiotics. If AMR nullifies these drugs, these vital complex medical procedures will become highly lethal due to uncontrollable secondary infections." },
+          { q: "Q3. Quantify the agricultural contribution to global antimicrobial resistance using the WHO data, and explain the biological mechanism involved.", a: "A3. Agriculture accounts for a massive 70% of total critical antibiotic consumption, which is routinely administered to healthy livestock. This creates an ideal evolutionary breeding ground for superbugs, which systematically cross over into the human biology via the commercial food chain." },
+          { q: "Q4. Detail the specific economic market failure that prevents corporate pharmaceutical entities from autonomously developing next-generation antibiotics.", a: "A4. Antibiotics are designed for short-term acute use, making them financially far less profitable than daily long-term chronic disease medications. Corporate R&D capital naturally flees the antibiotic sector, necessitating state intervention to fix the funding void." },
+          { q: "Q5. What dual policy approach—combining restriction and incentive—does the author outline to avert the projected 2050 catastrophe?", a: "A5. The author demands a restrictive approach (legal bans on agricultural antibiotic misuse and tighter medical stewardship rules) paired with an incentive approach (state-backed financial grants and market incentives to stimulate corporate drug discovery)." }
+        ]
+      },
+      {
+        text: "The global transition toward a green, digital economy has shifted the focus of international geopolitics from fossil fuels to critical minerals. Rare earth elements—a group of 17 minerals essential for manufacturing high-tech devices—are critical components in smartphones, electric vehicle motors, wind turbines, and advanced military defense systems. As demand for these materials skyrockets, control over their supply chains has become a central point of geopolitical friction.\n\nCurrently, the global supply chain for rare earth minerals features extreme geographical concentration. According to data from the United States Geological Survey (USGS), a single nation dominates the market, accounting for roughly 60% of mining production and over 85% of refining capacity. This near-monopoly gives that nation immense economic leverage over importing countries. In the past, export restrictions or trade disputes have caused prices to surge, exposing the vulnerability of global technology and automotive manufacturing sectors to supply shocks.\n\nDeveloping a rare earth supply chain is challenging due to the environmental and financial costs involved. Although these elements are not exceptionally rare in the Earth's crust, they are found in low concentrations and are difficult to extract. The refining process involves hazardous chemical treatments that produce toxic and radioactive waste, raising severe environmental concerns. Consequently, many Western nations outsourced production to regions with laxer environmental standards for decades, creating the current dependency.\n\nTo mitigate these geopolitical vulnerabilities, international coalitions are actively diversifying their supply chains. Governments are investing in domestic mining projects, streamlining regulatory approvals, and collaborating with resource-rich nations in Africa and South America. Additionally, research into recycling rare earths from discarded electronic waste is gaining momentum. Achieving mineral independence will be critical for national security and the future of the clean energy transition.",
+        qas: [
+          { q: "Q1. What is the central topic discussed in this passage as a whole?", a: "A1. The geopolitical and eco-industrial frictions surrounding rare earth elements, analyzing how the processing near-monopoly of a single nation exposes global supply nodes to high vulnerability, the historical environmental reasons for outsourcing refining, and current diversification programs." },
+          { q: "Q2. Using the USGS statistics, evaluate the strategic vulnerability of global tech firms regarding rare earth metallurgy processing networks.", a: "A2. The vulnerability is extreme; while one nation controls 60% of raw extraction, it holds an even tighter chokehold on the critical industrial layer by controlling over 85% of the global refining capacity, giving it unprecedented geopolitical leverage." },
+          { q: "Q3. Explain the geographical and chemical paradox of 'rare' earth minerals as described in the text.", a: "A3. The paradox is that these elements are actually highly abundant throughout the Earth's crust, but they are mixed in very low physical concentrations, requiring highly toxic chemical extraction and radioactive processing to isolate." },
+          { q: "Q4. Reconstruct the historical socio-ecological decisions made by Western nations that directly caused the current near-monopoly configuration.", a: "A4. To avoid the extreme environmental costs and toxic/radioactive waste management penalties associated with chemical refining, Western states intentionally outsourced processing for decades to developing regions with highly relaxed ecological laws." },
+          { q: "Q5. What three distinct diversification pathways are sovereign nations currently executing to break their dependency on the dominant supplier?", a: "A5. The pathways are: 1) Re-shoring domestic extraction via accelerated regulatory fast-tracks, 2) Building new bilateral trade coalitions with mineral-dense African and South American states, and 3) Developing advanced recycling methodologies for electronic e-waste." }
+        ]
+      },
+      {
+        text: "The traditional model of employment—characterized by a steady nine-to-five job with a single employer and a fixed salary—is facing a significant decline. In its place, the \"gig economy,\" powered by digital platforms that connect independent freelancers with short-term tasks, has expanded rapidly. According to data from the International Labour Organization (ILO), the number of digital labor platforms has increased fivefold over the past decade, transforming how millions earn a living.\n\nAdvocates of the gig economy praise its unparalleled flexibility and autonomy. Freelancers can choose when, where, and how much they work, allowing them to balance earning an income with family responsibilities or personal creative projects. For businesses, hiring independent contractors reduces overhead costs associated with full-time employees, such as providing office space, health insurance, and paid leave. This flexibility allows startups and established corporations to scale their workforce up or down instantly in response to shifting market demands.\n\nHowever, labor rights advocates point to severe systemic disadvantages for gig workers. Because they are legally classified as independent contractors rather than employees, gig workers are excluded from essential labor protections, such as minimum wage guarantees, overtime pay, and workers' compensation. A study by the Economic Policy Institute found that after accounting for expenses like fuel, vehicle maintenance, and insurance, many ride-share drivers earn less than the local minimum wage. This financial instability leaves workers highly vulnerable to economic shocks.\n\nThe rapid growth of the gig economy has forced a legal re-evaluation of employment classifications worldwide. Policymakers are working to introduce a third legal category for workers—one that preserves flexible scheduling while guaranteeing basic labor protections and portable benefits. Designing updated regulations that protect workers without stifling the entrepreneurial innovation of digital platforms is a defining challenge for modern labor law.",
+        qas: [
+          { q: "Q1. What is the central topic discussed in this passage as a whole?", a: "A1. The macroeconomic expansion and structural challenges of the platform-driven gig economy, comparing the operational agility for corporations and flexibility for freelancers against severe labor standard voids, net wage suppression, and the push for statutory regulatory classification changes." },
+          { q: "Q2. Using the ILO metric, analyze the growth trajectory of digital labor networks over the past decade, and explain how corporations exploit this structure to cut expenses.", a: "A2. The network scale expanded 500% (fivefold). Corporations exploit this by legally designating workers as independent contractors, allowing the company to drop standard employee overhead commitments like health insurance, retirement contributions, and premium office space." },
+          { q: "Q3. Reconstruct the microeconomic financial reality discovered by the Economic Policy Institute regarding ride-share drivers' true net income.", a: "A3. The study proved that while gross earnings might look sufficient, once hidden operational overheads (fuel consumption, vehicular depreciation, mandatory insurance) are subtracted, the true net income often drops completely below the state's legal minimum wage line." },
+          { q: "Q4. What specific legal classification exploit strips gig workers of standard state-mandated security architectures like workers' compensation?", a: "A4. The systemic classification exploit is labeling workers exclusively as \"independent contractors\" rather than formal \"employees,\" which legally immunizes digital platform entities from providing statutory baseline protections." },
+          { q: "Q5. What innovative statutory compromise are global policymakers currently formulating to balance labor rights with corporate technological agility?", a: "A5. They are engineering a completely new \"third legal employment category\" engineered to lock in the flexible scheduling demanded by workers while legally mandating portable health/welfare benefits and structural minimum wage baselines." }
+        ]
+      },
+      {
+        text: "The world is rapidly moving toward a cashless society, driven by mobile payment apps, digital banking, and contactless credit cards. In countries like Sweden and South Korea, cash transactions account for less than 10% of total retail sales. While this digital transition offers convenience and security, economists warn that a complete elimination of physical currency introduces significant social and financial risks.\n\nThe primary benefits of a cashless economy are efficiency and reduced transaction costs. Digital payments streamline retail operations, eliminating the need for businesses to transport, count, and secure physical money. For governments, a digital ledger enhances tax compliance and reduces the shadow economy. According to a study by the European Central Bank, cash transactions are harder to trace, making them the preferred medium for tax evasion and money laundering. Transitioning to digital records makes illicit financial flows easier to intercept.\n\nDespite these efficiency gains, a cashless society raises severe concerns regarding financial exclusion and digital privacy. Vulnerable populations, including the elderly, low-income citizens, and unbanked individuals, rely heavily on physical cash. A report by the World Bank highlighted that roughly 1.4 billion adults globally remain unbanked, lacking access to digital financial networks. Forcing these individuals into a purely digital economy could cut them off from essential goods and services. Furthermore, relying entirely on digital networks leaves society vulnerable to systemic failures caused by cyberattacks or prolonged power outages.\n\nTo ensure an equitable financial transition, governments must implement protective regulations. Some jurisdictions have passed laws requiring retail businesses to accept physical cash, ensuring that cash remains a valid payment method. Additionally, investing in public digital financial literacy and secure financial infrastructure will be essential. A balanced financial ecosystem should embrace digital convenience while protecting the rights of all citizens.",
+        qas: [
+          { q: "Q1. What is the central topic discussed in this passage as a whole?", a: "A1. The global transition toward a cashless economic architecture, detailing its administrative retail efficiencies and its anti-fraud utilities for central states against its negative societal externalities, such as the systematic exclusion of unbanked populations and digital single-point-of-failure risks." },
+          { q: "Q2. Using the macroeconomic indicators from Sweden and South Korea, describe the current state of transaction patterns, and explain the state-level incentive for accelerating this trend.", a: "A2. Cash has been reduced to a niche minority status, comprising under 10% of total commercial retail traffic. The state-level incentive is that digital transactions leave permanent audit trails, allowing governments to dismantle the shadow economy, trace money laundering, and maximize tax collections." },
+          { q: "Q3. Synthesize the World Bank statistic to formulate an argument against the total elimination of sovereign physical cash.", a: "A3. Eliminating cash creates aggressive financial exclusion: 1.4 billion adults globally are structurally unbanked and lack digital access. Deleting physical currency entirely would completely sever this huge vulnerable demographic from participating in the baseline purchase of essential food and services." },
+          { q: "Q4. Detail the national security and technical systemic vulnerabilities inherent in a 100% digital fiat monetary grid.", a: "A4. A completely digital grid possesses an acute single point of failure; it is highly vulnerable to targeted foreign cyberattacks or sweeping regional grid blackouts, which could instantly paralyze the nation's total economic exchange capability." },
+          { q: "Q5. What specific regulatory and legislative firewall have progressive jurisdictions executed to stop corporations from completely banning physical currency?", a: "A5. They have passed mandatory merchant compliance laws that legally compel retail businesses to accept physical cash as legal tender, establishing an analog economic alternative that protects disenfranchised demographics." }
+        ]
+      },
+      {
+        text: "As artificial intelligence and automated systems become capable of performing complex technical tasks, the criteria for career success are shifting. Historically, educational institutions and corporate hiring managers prioritized \"hard skills,\" such as advanced mathematics, data analysis, and programming. However, in an economy where technical tasks are automated, soft skills—such as emotional intelligence, communication, and adaptability—are becoming essential assets.\n\nThe shift toward soft skills is driven by the reality of automation. AI excels at analyzing vast datasets, identifying patterns, and writing software code at speeds humans cannot match. A McKinsey & Company report estimated that by 2030, the demand for technological skills will rise, but the demand for social and emotional skills will grow by over 24% across all industries. While an AI can draft a contract or diagnose an illness, it lacks the human empathy required to comfort a patient or negotiate a complex corporate partnership.\n\nFurthermore, leadership and collaborative skills are vital for navigating the modern workplace. Organizations operate in volatile global environments, requiring teams to adapt to unexpected disruptions. A survey conducted by LinkedIn revealed that 92% of talent professionals believe soft skills are just as important, if not more important, than hard skills when evaluating candidates. Employees who possess strong conflict resolution and cross-cultural communication abilities are essential for maintaining team cohesion and driving corporate innovation.\n\nDespite this recognized value, traditional educational systems remain heavily focused on standardized testing and rote memorization of technical facts. To prepare students for the future labor market, educational curricula must be redesigned. Schools and universities must incorporate project-based learning, public speaking, and ethical reasoning into their core programs. By cultivating uniquely human attributes, education can empower the future workforce to thrive alongside advanced technology.",
+        qas: [
+          { q: "Q1. What is the central topic discussed in this passage as a whole?", a: "A1. The changing labor value of personal \"soft skills\" relative to automated technical \"hard skills\" in an AI-driven economy, supported by hiring market indicators, and demanding a pedagogical restructuring of standard education frameworks to insulate human workers from obsolescence." },
+          { q: "Q2. Using the McKinsey & Company projections, compare the future commercial value of quantitative technical skills against social-emotional skills in the automated workplace.", a: "A2. While technical skills remain necessary, quantitative tasks are increasingly commoditized by high-speed AI automation. Social-emotional skills are experiencing a major structural demand increase, projected to expand by over 24% by 2030 because they represent cognitive areas AI cannot replicate." },
+          { q: "Q3. Detail the specific competitive business limitations that an advanced AI model encounters when executing high-level tasks like corporate negotiation or healthcare delivery.", a: "A3. AI completely lacks genuine human empathy, emotional intelligence, and situational adaptability. It can synthesize data but cannot physically comfort a critically ill patient or read the complex psychological nuances required to secure a cross-border corporate merger." },
+          { q: "Q4. Contrast the current emphasis of contemporary educational institutions with the hiring realities indicated by the LinkedIn survey data.", a: "A4. Contemporary educational institutions remain trapped in a legacy system prioritizing standardized tests and rote memorization. This completely clashes with the corporate market reality, where 92% of professional talent evaluators demand soft skills as a primary benchmark for recruitment." },
+          { q: "Q5. What definitive pedagogical restructurings does the author demand from university administrators to insulate human workers from technological obsolescence?", a: "A5. The author demands a total overhaul of curricula away from static lectures toward immersive, project-based learning, structured public debate, and complex ethical reasoning modules designed to systematically cultivate uniquely human cognitive traits." }
+        ]
+      }
+    ];
+
+    const lessons = rawLessons.map(lesson => ({
+      text: lesson.text.replace(/\*\*/g, ''),
+      qas: lesson.qas
+    }));
+
+    let currentLessonIndex = 0;
+    let currentQuizIndex = 0;
+   
+    let timerInterval = null;
+    let timeLeft = 0;
+    let initialTimerDuration = 0;
+
+    const coverPage = document.getElementById('coverPage');
+    const learningPage = document.getElementById('learningPage');
+    const lessonSelectCover = document.getElementById('lessonSelectCover');
+    const lessonSelectHeader = document.getElementById('lessonSelectHeader');
+    const timerSetting = document.getElementById('timerSetting');
+    const startLessonBtn = document.getElementById('startLessonBtn');
+   
+    const timerDisplayContainer = document.getElementById('timerDisplayContainer');
+    const timerTime = document.getElementById('timerTime');
+
+    const textContainer = document.getElementById('readingText');
+    const questionText = document.getElementById('quizQuestion');
+    const answerContainer = document.getElementById('quizAnswer');
+    const quizProgress = document.getElementById('quizProgress');
+   
+    const showAnsBtn = document.getElementById('showAnsBtn');
+    const nextQuizBtn = document.getElementById('nextQuizBtn');
+    const lessonTitle = document.getElementById('lessonTitle');
+    const headerSelectContainer = document.getElementById('headerSelectContainer');
+    const headerLogo = document.getElementById('headerLogo');
+    const backToCoverBtn = document.getElementById('backToCoverBtn');
+
+    function init() {
+      lessons.forEach((_, index) => {
+        const optCover = document.createElement('option');
+        optCover.value = index;
+        optCover.innerText = `Passage ${index + 1}`;
+        lessonSelectCover.appendChild(optCover);
+
+        const optHeader = document.createElement('option');
+        optHeader.value = index;
+        optHeader.innerText = `Passage ${index + 1}`;
+        lessonSelectHeader.appendChild(optHeader);
+      });
+
+      startLessonBtn.addEventListener('click', () => {
+        const selectedIndex = parseInt(lessonSelectCover.value);
+        initialTimerDuration = parseInt(timerSetting.value);
+        startLesson(selectedIndex);
+      });
+
+      lessonSelectHeader.addEventListener('change', (e) => {
+        currentLessonIndex = parseInt(e.target.value);
+        currentQuizIndex = 0;
+        resetAndStartTimer();
+        renderLesson();
+      });
+
+      headerLogo.addEventListener('click', showCover);
+      backToCoverBtn.addEventListener('click', showCover);
+      showAnsBtn.addEventListener('click', showAnswer);
+      nextQuizBtn.addEventListener('click', handleNextQuiz);
+    }
+
+    function startLesson(index) {
+      currentLessonIndex = index;
+      currentQuizIndex = 0;
+     
+      coverPage.classList.add('hidden');
+      learningPage.classList.remove('hidden');
+      headerSelectContainer.classList.remove('hidden');
+     
+      resetAndStartTimer();
+      renderLesson();
+    }
+
+    function showCover() {
+      stopTimer();
+      lessonSelectCover.value = currentLessonIndex;
+     
+      learningPage.classList.add('hidden');
+      headerSelectContainer.classList.add('hidden');
+      coverPage.classList.remove('hidden');
+    }
+
+    function resetAndStartTimer() {
+      stopTimer();
+     
+      if (initialTimerDuration === 0) {
+        timerDisplayContainer.classList.add('hidden');
+        return;
+      }
+     
+      timerDisplayContainer.classList.remove('hidden');
+      timeLeft = initialTimerDuration;
+      updateTimerUI();
+
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        updateTimerUI();
+
+        if (timeLeft <= 0) {
+          stopTimer();
+          timerTime.innerText = "Time Up!";
+          timerDisplayContainer.classList.remove('bg-gray-100', 'text-gray-700', 'border-gray-300');
+          timerDisplayContainer.classList.add('bg-red-100', 'text-red-700', 'border-red-300');
+        }
+      }, 1000);
+    }
+
+    function stopTimer() {
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
+      timerDisplayContainer.classList.remove('bg-red-100', 'text-red-700', 'border-red-300');
+      timerDisplayContainer.classList.add('bg-gray-100', 'text-gray-700', 'border-gray-300');
+    }
+
+    function updateTimerUI() {
+      if (timeLeft < 0) return;
+      const minutes = Math.floor(timeLeft / 60);
+      const seconds = timeLeft % 60;
+      timerTime.innerText = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
+
+    function renderLesson() {
+      const lesson = lessons[currentLessonIndex];
+     
+      lessonSelectHeader.value = currentLessonIndex;
+      lessonTitle.innerText = `Passage ${currentLessonIndex + 1}`;
+     
+      const paragraphs = lesson.text.split('\n\n').map(p => `<p class="mb-4 text-justify font-sans">${p}</p>`).join('');
+      textContainer.innerHTML = paragraphs;
+     
+      textContainer.parentElement.scrollTop = 0;
+     
+      renderQuizQuestion();
+    }
+
+    function renderQuizQuestion() {
+      const lesson = lessons[currentLessonIndex];
+      const totalQuizzes = lesson.qas.length;
+
+      answerContainer.classList.add('hidden');
+      showAnsBtn.style.display = 'block';
+
+      if (currentQuizIndex < totalQuizzes) {
+        quizProgress.innerText = `Critical Question ${currentQuizIndex + 1} / ${totalQuizzes}`;
+       
+        questionText.classList.remove('fade-in');
+        void questionText.offsetWidth;
+       
+        questionText.innerText = lesson.qas[currentQuizIndex].q;
+        questionText.classList.add('fade-in');
+       
+        nextQuizBtn.innerHTML = `Next Question <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>`;
+      } else {
+        quizProgress.innerText = "Completed!";
+        questionText.innerText = "🎉 Excellent. You have parsed all critical analysis questions for this passage!";
+        showAnsBtn.style.display = 'none';
+
+        if (currentLessonIndex < lessons.length - 1) {
+          nextQuizBtn.innerHTML = `Next Passage <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>`;
+        } else {
+          nextQuizBtn.innerHTML = `Back to Cover`;
+        }
+      }
+    }
+
+    function showAnswer() {
+      const lesson = lessons[currentLessonIndex];
+      if (currentQuizIndex >= lesson.qas.length) return;
+
+      answerContainer.innerText = lesson.qas[currentQuizIndex].a;
+      answerContainer.classList.remove('hidden');
+    }
+
+    function handleNextQuiz() {
+      const lesson = lessons[currentLessonIndex];
+     
+      if (currentQuizIndex < lesson.qas.length) {
+        currentQuizIndex++;
+        renderQuizQuestion();
+      } else {
+        if (currentLessonIndex < lessons.length - 1) {
+          currentLessonIndex++;
+          currentQuizIndex = 0;
+          resetAndStartTimer();
+          renderLesson();
+        } else {
+          showCover();
+        }
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>

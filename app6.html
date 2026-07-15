@@ -35,7 +35,7 @@
   <div id="coverPage" class="max-w-xl mx-auto px-4 py-12 w-full flex-grow flex flex-col justify-center items-center fade-in overflow-y-auto">
     <div class="text-center mb-8">
       <h2 class="text-3xl font-extrabold text-gray-950 mb-3">Business Reading Practice</h2>
-      <p class="text-gray-500 font-medium">CEFR B2 レベルのビジネス英語リーディング（全20本）<br>（問題は少し難しいです。）</p>
+      <p class="text-gray-500 font-medium">CEFR B2 レベルのビジネス英語リーディング（全20本）<br>（問題は少し難しいです。気にしないで。）</p>
     </div>
    
     <div class="bg-white border border-gray-200 rounded-2xl shadow-sm p-8 w-full space-y-6">
@@ -51,8 +51,8 @@
           <option value="0">タイマーなし</option>
           <option value="60">1 分</option>
           <option value="120">2 分</option>
-          <option value="180" selected>3 分</option>
-          <option value="300">5 分</option>
+          <option value="180">3 分</option>
+          <option value="300" selected>5 分</option>
         </select>
       </div>
      
@@ -66,7 +66,7 @@
   <!-- 学習メインコンテナ (上下分割) -->
   <div id="learningPage" class="hidden flex-grow flex flex-col h-full w-full overflow-hidden fade-in">
    
-    <!-- 上側 60%: 本文表示エリア -->
+    <!-- 上側 60%: 本文表示エリア (独立スクロール・横幅を制限) -->
     <div class="h-[60%] flex flex-col bg-white border-b border-gray-300 min-h-0">
       <div class="bg-gray-100 border-b border-gray-200 px-6 py-2 flex justify-between items-center flex-shrink-0">
         <div class="flex items-center gap-4">
@@ -83,38 +83,44 @@
           </div>
         </div>
       </div>
+      <!-- 本文スクロールエリア -->
       <div class="w-full overflow-y-auto px-6 py-8 shadow-inner bg-slate-50/10 flex-grow">
         <div class="max-w-3xl mx-auto text-base md:text-lg leading-relaxed text-gray-700 font-normal tracking-wide" id="readingText">
         </div>
       </div>
     </div>
 
-    <!-- 下側 40%: クイズ・回答エリア -->
+    <!-- 下側 40%: クイズ・回答エリア (全体がスクロール可能) -->
     <div class="h-[40%] flex flex-col bg-white min-h-0 relative z-20 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
-      <div class="bg-gray-50 border-b border-gray-200 px-6 py-2 flex justify-between items-center flex-shrink-0">
-        <h2 class="text-xs font-bold text-gray-500 uppercase tracking-wider">Quiz Section (Analysis)</h2>
-        <div class="text-xs text-gray-500 font-medium font-mono" id="quizProgress">Question 1 / 5</div>
-      </div>
-     
-      <div class="p-4 md:p-6 flex-grow flex flex-col justify-between overflow-y-auto min-h-0">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-start flex-grow overflow-y-auto mb-2">
-          <!-- 問題表示 -->
-          <div id="quizQuestion" class="text-sm md:text-base font-semibold text-gray-900 bg-white p-3 md:p-4 rounded-xl border border-gray-200 fade-in h-full overflow-y-auto">
-          </div>
-          <!-- 回答表示 -->
-          <div id="quizAnswer" class="hidden text-sm md:text-base p-3 md:p-4 bg-white text-gray-700 rounded-xl border border-gray-200 fade-in leading-relaxed h-full overflow-y-auto">
-          </div>
+      <!-- この親コンテナに独立スクロールを設定 -->
+      <div class="flex-grow overflow-y-auto">
+        <!-- タイトルバー (stickyでスクロール時に上部固定) -->
+        <div class="bg-gray-50 border-b border-gray-200 px-6 py-2 flex justify-between items-center sticky top-0 z-10 flex-shrink-0">
+          <h2 class="text-xs font-bold text-gray-500 uppercase tracking-wider">Quiz Section (Analysis)</h2>
+          <div class="text-xs text-gray-500 font-medium font-mono" id="quizProgress">Question 1 / 5</div>
         </div>
+       
+        <!-- クイズ中身とボタンをすべて含むエリア -->
+        <div class="p-4 md:p-6 flex flex-col gap-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+            <!-- 問題表示 -->
+            <div id="quizQuestion" class="text-sm md:text-base font-semibold text-gray-900 bg-white p-3 md:p-4 rounded-xl border border-gray-200 fade-in">
+            </div>
+            <!-- 回報表示 -->
+            <div id="quizAnswer" class="hidden text-sm md:text-base p-3 md:p-4 bg-white text-gray-700 rounded-xl border border-gray-200 fade-in leading-relaxed">
+            </div>
+          </div>
 
-        <!-- アクションボタン -->
-        <div class="flex justify-between items-center gap-4 flex-shrink-0 pt-3 border-t border-gray-100">
-          <button id="showAnsBtn" class="px-5 py-2 bg-gray-800 hover:bg-gray-900 text-white rounded-lg font-medium transition-colors text-xs md:text-sm">
-            Show Answer
-          </button>
-          <button id="nextQuizBtn" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors text-xs md:text-sm flex items-center gap-1">
-            Next Question
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
-          </button>
+          <!-- アクションボタン (スクロール可能な領域の最後に配置) -->
+          <div class="flex justify-between items-center gap-4 flex-shrink-0 pt-3 border-t border-gray-100">
+            <button id="showAnsBtn" class="px-5 py-2 bg-gray-800 hover:bg-gray-900 text-white rounded-lg font-medium transition-colors text-xs md:text-sm">
+              Show Answer
+            </button>
+            <button id="nextQuizBtn" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors text-xs md:text-sm flex items-center gap-1">
+              Next Question
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -268,7 +274,7 @@
         qas: [
           { q: "Q1. What is the central topic discussed in this passage as a whole?", a: "A1. The proliferation of AI-generated deepfakes as a systemic threat to democratic stability, market integrity, corporate security, and civic privacy, presenting the requirement for a unified defense strategy built on algorithmic detection, social platform laws, and user literacy." },
           { q: "Q2. Based on the Brookings Institution statistic, detail the mathematical expansion curve of deepfake content on the internet.", a: "A2. The expansion curve is strictly exponential; the aggregate volume of malicious synthetic media circulating on digital channels compounds by 100% (doubles) every six sequential months." },
-          { q: "Q3. Analyze the operational mechanism and financial damage of the corporate security threat enabled by AI voice synthesis.", a: "A2. Cybercriminals deploy highly realistic AI voice clones to mimic corporate executives in targeted phishing operations. This allows them to bypass security protocols and trick employees into authorizing fraudulent wire transfers, a vector that has expanded by 30% and cost millions." },
+          { q: "Q3. Analyze the operational mechanism and financial damage of the corporate security threat enabled by AI voice synthesis.", a: "A3. Cybercriminals deploy highly realistic AI voice clones to mimic corporate executives in targeted phishing operations. This allows them to bypass security protocols and trick employees into authorizing fraudulent wire transfers, a vector that has expanded by 30% and cost millions." },
           { q: "Q4. Why does the rapid acceleration of generative AI fundamentally destroy the epistemological validity of classic visual evidence in the public sphere?", a: "A4. Because deepfakes achieve absolute visual and auditory realism, making it impossible to differentiate authentic captures from synthesized fabrications, rendering the legacy standard of \"seeing is believing\" completely obsolete." },
           { q: "Q5. Outline the three distinct defensive pillars that the author states must be deployed simultaneously to neutralize digital misinformation.", a: "A5. The three pillars are: 1) Technological innovation (AI-driven active detection systems), 2) Platform regulation (strict corporate removal and flagging policies on social channels), and 3) Mass media literacy (cultivating proactive public skepticism)." }
         ]
